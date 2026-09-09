@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ulta — Purno Ongsher Engine</title>
+
+  <style>
+    :root {
+      --bg: #0b1020;
+      --surface: #121a2b;
+      --surface-2: #1a2540;
+      --border: #2b3955;
+      --text: #eef4ff;
+      --muted: #9eacc4;
+      --accent: #ff8547;
+      --code: #080d18;
+      --success: #63dfa0;
+      --danger: #ff8194;
+      --warning: #ffd166;
+    }
+
+    html[data-theme="light"] {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef3fa;
+      --border: #d5deeb;
+      --text: #172238;
+      --muted: #66758d;
+      --accent: #d95d16;
+      --code: #101827;
+      --success: #168653;
+      --danger: #c83c54;
+      --warning: #a36b00;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    button,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button,
+    a {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    code,
+    pre,
+    textarea,
+    .mono {
+      font-family: "Cascadia Code", Consolas, monospace;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: color-mix(in srgb, var(--bg) 94%, transparent);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 12px;
+      background: transparent;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .brand b {
+      letter-spacing: -0.04em;
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav a,
+    .theme-button {
+      border: 1px solid transparent;
+      border-radius: 9px;
+      padding: 8px 11px;
+      color: var(--muted);
+      background: transparent;
+    }
+
+    .nav a:hover,
+    .theme-button:hover {
+      color: var(--text);
+      background: var(--surface-2);
+      border-color: var(--border);
+    }
+
+    .hero {
+      padding: 75px 0 50px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 42px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5.8rem);
+      line-height: 0.96;
+      letter-spacing: -0.08em;
+      margin: 13px 0 22px;
+    }
+
+    .hero h1 span {
+      color: var(--accent);
+    }
+
+    .hero p {
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 1.06rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 15px;
+      font-weight: 750;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .terminal {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      background: var(--code);
+      box-shadow: 0 20px 60px #0005;
+      transform: rotate(1deg);
+    }
+
+    .termbar {
+      padding: 13px 16px;
+      border-bottom: 1px solid #ffffff18;
+      color: #8290a8;
+      font-size: 12px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: #667085;
+    }
+
+    .dot:nth-child(1) {
+      background: #ff6b6b;
+    }
+
+    .dot:nth-child(2) {
+      background: #ffd166;
+    }
+
+    .dot:nth-child(3) {
+      background: #65dfa0;
+    }
+
+    .termcode {
+      padding: 22px;
+      color: #dce8ff;
+      font-size: 13px;
+      line-height: 1.9;
+    }
+
+    .orange {
+      color: #ff9d61;
+    }
+
+    .green {
+      color: #65dfa0;
+    }
+
+    .gray {
+      color: #65738b;
+    }
+
+    .section {
+      padding: 35px 0 75px;
+    }
+
+    .heading {
+      margin-bottom: 21px;
+    }
+
+    .heading h2 {
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+      letter-spacing: -0.05em;
+      margin: 5px 0;
+    }
+
+    .heading p {
+      color: var(--muted);
+      margin: 0;
+      max-width: 700px;
+    }
+
+    .playground {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .panel {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      background: var(--surface);
+      box-shadow: 0 20px 60px #0002;
+    }
+
+    .panel-head,
+    .panel-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 13px 16px;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-foot {
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      border-bottom: 0;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .meta,
+    .status {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .sample {
+      max-width: 190px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 390px;
+      resize: vertical;
+      border: 0;
+      outline: 0;
+      padding: 20px;
+      background: var(--code);
+      color: #dce8ff;
+      font-size: 13px;
+      line-height: 1.8;
+      tab-size: 4;
+    }
+
+    textarea:focus {
+      box-shadow: inset 0 0 0 2px var(--accent);
+    }
+
+    .output {
+      margin: 0;
+      min-height: 390px;
+      max-height: 560px;
+      overflow: auto;
+      padding: 20px;
+      background: var(--code);
+      color: #b9f6d0;
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .output.error {
+      color: #ff9baa;
+      background: color-mix(in srgb, var(--danger) 10%, var(--code));
+    }
+
+    .status {
+      margin-left: auto;
+    }
+
+    .docs {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 28px;
+    }
+
+    .doc-nav {
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+      padding: 9px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+    }
+
+    .doc-nav a {
+      display: block;
+      padding: 9px 11px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .doc-nav a:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    .doc {
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 90px;
+    }
+
+    .doc:first-child {
+      padding-top: 0;
+    }
+
+    .doc h3 {
+      font-size: 1.45rem;
+      letter-spacing: -0.04em;
+      margin: 0 0 7px;
+    }
+
+    .doc h4 {
+      margin: 24px 0 7px;
+      font-size: 1rem;
+    }
+
+    .doc p,
+    .doc li {
+      color: var(--muted);
+    }
+
+    .doc ul {
+      padding-left: 20px;
+    }
+
+    .codebox {
+      margin-top: 15px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--code);
+    }
+
+    .codehead {
+      padding: 9px 13px;
+      border-bottom: 1px solid #ffffff18;
+      color: #8290a8;
+      font-size: 11px;
+    }
+
+    .codebox pre {
+      margin: 0;
+      overflow: auto;
+      padding: 16px;
+      color: #dce8ff;
+      font-size: 12.5px;
+      line-height: 1.8;
+    }
+
+    .callout {
+      margin-top: 15px;
+      padding: 16px;
+      border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--border));
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+    }
+
+    .callout strong {
+      color: var(--accent);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0 45px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 850px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 48px;
+      }
+
+      .terminal {
+        transform: none;
+      }
+
+      .playground,
+      .docs {
+        grid-template-columns: 1fr;
+      }
+
+      .doc-nav {
+        position: static;
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+      }
+
+      .doc-nav a {
+        white-space: nowrap;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .shell {
+        width: calc(100% - 22px);
+      }
+
+      .nav a {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 3.2rem;
+      }
+
+      .panel-head {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .status {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      textarea,
+      .output {
+        min-height: 300px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#">
+        <span class="logo">
+          <img src="./logo.svg" alt="Ulta logo">
+        </span>
+
+        <span>
+          <b>Ulta</b>
+          <small>Purno Ongsher Engine</small>
+        </span>
+      </a>
+
+      <nav class="nav">
+        <a href="#playground">Playground</a>
+        <a href="#docs">Documentation</a>
+
+        <a
+          href="https://github.com/notmubasshir/Ulta-lang"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub
+        </a>
+
+        <button
+          class="theme-button"
+          id="themeButton"
+          type="button"
+          aria-label="Toggle theme"
+        >
+          ☀️
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="shell hero">
+      <div>
+        <div class="eyebrow">
+          Bangladeshi-inspired esoteric language
+        </div>
+
+        <h1>
+          Code that goes a little
+          <span>ulta.</span>
+        </h1>
+
+        <p>
+          Ulta is an experimental interpreted language with Banglish
+          keywords, arithmetic, variables, conditions, loops, functions,
+          and reverse block execution.
+        </p>
+
+        <div class="actions">
+          <a class="btn primary" href="#playground">
+            Try playground →
+          </a>
+
+          <a class="btn" href="#installation">
+            Installation guide
+          </a>
+        </div>
+      </div>
+
+      <div class="terminal">
+        <div class="termbar">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          ulta-repl
+        </div>
+
+        <div class="termcode mono">
+          <span class="gray">ulta&gt;</span>
+          <span class="orange">banao</span> x = 0;<br>
+
+          <span class="gray">ulta&gt;</span>
+          <span class="orange">jotokhon</span> x &lt; 3 {<br>
+          &nbsp;&nbsp;x = x + 1;<br>
+          &nbsp;&nbsp;<span class="orange">dekhao</span> x;<br>
+          }<br>
+
+          <span class="green">1</span><br>
+          <span class="green">2</span><br>
+          <span class="green">3</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell section" id="playground">
+      <div class="heading">
+        <div class="eyebrow">Live playground</div>
+        <h2>Write. Run. Inspect.</h2>
+
+        <p>
+          Test Ulta code directly in your browser.
+          Use Ctrl + Enter to execute the current program.
+        </p>
+      </div>
+
+      <div class="playground">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">main.ulta</div>
+              <div class="meta">Ulta source code</div>
+            </div>
+
+            <select
+              class="sample"
+              id="samples"
+              aria-label="Choose example"
+            >
+              <option value="loop">Reverse loop</option>
+              <option value="math">Arithmetic</option>
+              <option value="ifelse">Jodi / nahole</option>
+              <option value="function">Function</option>
+              <option value="text">Text</option>
+              <option value="installation">Install commands</option>
+            </select>
+          </div>
+
+          <textarea id="code" spellcheck="false">banao x = 0;
+
+jotokhon x < 3 {
+    x = x + 1;
+    dekhao x;
+}</textarea>
+
+          <div class="panel-foot">
+            <button class="btn primary" id="run" type="button">
+              ▶ Run script
+            </button>
+
+            <button class="btn" id="reset" type="button">
+              Reset
+            </button>
+
+            <span class="status" id="editorStatus">
+              Ready
+            </span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">stdout</div>
+              <div class="meta">Captured program output</div>
+            </div>
+
+            <span class="meta mono">Ctrl + Enter</span>
+          </div>
+
+          <pre
+            class="output"
+            id="output"
+            aria-live="polite"
+          >Click “Run script” to execute your Ulta code.</pre>
+
+          <div class="panel-foot">
+            <button class="btn" id="clear" type="button">
+              Clear output
+            </button>
+
+            <span class="status" id="runStatus">
+              Idle
+            </span>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="shell section" id="docs">
+      <div class="heading">
+        <div class="eyebrow">Language reference</div>
+        <h2>Documentation</h2>
+
+        <p>
+          Learn the syntax and install Ulta without leaving this page.
+        </p>
+      </div>
+
+      <div class="docs">
+        <aside class="doc-nav">
+          <a href="#overview">Overview</a>
+          <a href="#installation">Installation</a>
+          <a href="#variables">Variables</a>
+          <a href="#math">Arithmetic</a>
+          <a href="#conditions">Conditions</a>
+          <a href="#loops">Loops</a>
+          <a href="#functions">Functions</a>
+          <a href="#gimmick">Gimmick</a>
+          <a href="#errors">Errors</a>
+        </aside>
+
+        <div>
+          <article class="doc" id="overview">
+            <h3>Overview</h3>
+
+            <p>
+              Ulta is an interpreted language. Source code is parsed into
+              statements and then executed by the interpreter.
+            </p>
+
+            <p>
+              Statements normally end with semicolons. Blocks use curly
+              braces.
+            </p>
+
+            <div class="callout">
+              <strong>Important:</strong>
+              The current engine reverses statements inside blocks and
+              function bodies.
+            </div>
+          </article>
+
+          <article class="doc" id="installation">
+            <h3>Installation Guide</h3>
+
+            <p>
+              Follow these steps to install Ulta from the GitHub repository.
+            </p>
+
+            <h4>1. Install Node.js</h4>
+
+            <p>
+              Install Node.js from the official Node.js website.
+              npm is included with Node.js.
+            </p>
+
+            <div class="codebox">
+              <div class="codehead">Check Node.js and npm</div>
+              <pre>node --version
+npm --version</pre>
+            </div>
+
+            <h4>2. Install Git</h4>
+
+            <p>
+              Install Git and verify that it is available.
+            </p>
+
+            <div class="codebox">
+              <div class="codehead">Check Git</div>
+              <pre>git --version</pre>
+            </div>
+
+            <h4>3. Clone the repository</h4>
+
+            <div class="codebox">
+              <div class="codehead">Terminal</div>
+              <pre>git clone https://github.com/notmubasshir/Ulta-lang.git
+cd Ulta-lang</pre>
+            </div>
+
+            <h4>4. Install dependencies</h4>
+
+            <div class="codebox">
+              <div class="codehead">Terminal</div>
+              <pre>npm install</pre>
+            </div>
+
+            <h4>5. View available commands</h4>
+
+            <div class="codebox">
+              <div class="codehead">Terminal</div>
+              <pre>npm run</pre>
+            </div>
+
+            <p>
+              This command displays the scripts configured in the project.
+            </p>
+
+            <h4>6. Start the development server</h4>
+
+            <div class="codebox">
+              <div class="codehead">Terminal</div>
+              <pre>npm run dev</pre>
+            </div>
+
+            <p>
+              Open the local URL shown in the terminal.
+            </p>
+
+            <h4>7. Build the project</h4>
+
+            <div class="codebox">
+              <div class="codehead">Terminal</div>
+              <pre>npm run build</pre>
+            </div>
+
+            <h4>8. Preview the production build</h4>
+
+            <div class="codebox">
+              <div class="codehead">Terminal</div>
+              <pre>npm run preview</pre>
+            </div>
+
+            <h4>Common installation problems</h4>
+
+            <ul>
+              <li>
+                <strong>npm is not recognized:</strong>
+                install Node.js and restart Visual Studio Code.
+              </li>
+
+              <li>
+                <strong>Cannot find module:</strong>
+                make sure the terminal is inside the Ulta-lang folder.
+              </li>
+
+              <li>
+                <strong>Dependencies are missing:</strong>
+                run <code>npm install</code> again.
+              </li>
+
+              <li>
+                <strong>Unknown npm command:</strong>
+                run <code>npm run</code> to see the available scripts.
+              </li>
+            </ul>
+
+            <div class="callout">
+              <strong>Repository:</strong>
+              <a
+                href="https://github.com/notmubasshir/Ulta-lang"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                github.com/notmubasshir/Ulta-lang
+              </a>
+            </div>
+          </article>
+
+          <article class="doc" id="variables">
+            <h3>Variables</h3>
+
+            <p>
+              Use <code>banao</code> to create a variable.
+              Assignment updates an existing variable.
+            </p>
+
+            <div class="codebox">
+              <div class="codehead">variables.ulta</div>
+              <pre>banao score = 10;
+score = score + 5;
+dekhao score;</pre>
+            </div>
+          </article>
+
+          <article class="doc" id="math">
+            <h3>Arithmetic</h3>
+
+            <p>
+              Ulta supports addition, subtraction, multiplication,
+              division, and remainder.
+            </p>
+
+            <div class="codebox">
+              <div class="codehead">math.ulta</div>
+              <pre>banao a = 8;
+banao b = 3;
+
+dekhao a + b;
+dekhao a - b;
+dekhao a * b;
+dekhao a / b;
+dekhao a % b;</pre>
+            </div>
+          </article>
+
+          <article class="doc" id="conditions">
+            <h3>Conditions</h3>
+
+            <p>
+              Use <code>jodi</code> for a condition and
+              <code>nahole</code> for the alternative branch.
+            </p>
+
+            <div class="codebox">
+              <div class="codehead">conditions.ulta</div>
+              <pre>banao x = 7;
+
+jodi x > 5 {
+    dekhao "besh bhalo";
+}
+nahole {
+    dekhao "abar chesta koro";
+}</pre>
+            </div>
+          </article>
+
+          <article class="doc" id="loops">
+            <h3>Loops</h3>
+
+            <p>
+              Use <code>jotokhon</code> to repeat a block while its
+              condition is true.
+            </p>
+
+            <div class="codebox">
+              <div class="codehead">loops.ulta</div>
+              <pre>banao x = 0;
+
+jotokhon x < 3 {
+    x = x + 1;
+    dekhao x;
+}</pre>
+            </div>
+
+            <div class="callout">
+              <strong>Remember:</strong>
+              Statements inside the loop execute from bottom to top.
+            </div>
+          </article>
+
+          <article class="doc" id="functions">
+            <h3>Functions</h3>
+
+            <p>
+              Declare a function using <code>kaaj</code>.
+              Function parameters are written inside parentheses.
+            </p>
+
+            <div class="codebox">
+              <div class="codehead">functions.ulta</div>
+              <pre>kaaj greet(name) {
+    dekhao "Hello, " + name;
+}
+
+greet("Bangladesh");</pre>
+            </div>
+          </article>
+
+          <article class="doc" id="gimmick">
+            <h3>The Purno Ongsher Gimmick</h3>
+
+            <p>
+              Ulta reverses parsed statements inside blocks and function
+              bodies. This is an intentional language rule.
+            </p>
+
+            <div class="codebox">
+              <div class="codehead">reverse.ulta</div>
+              <pre>banao x = 0;
+
+jotokhon x < 3 {
+    dekhao x;
+    x = x + 1;
+}</pre>
+            </div>
+
+            <p>
+              In this example, the assignment may execute before the output
+              statement because the block is reversed.
+            </p>
+          </article>
+
+          <article class="doc" id="errors">
+            <h3>Error Messages</h3>
+
+            <p>
+              Common errors usually come from invalid syntax, missing
+              variables, missing functions, or incomplete blocks.
+            </p>
+
+            <div class="codebox">
+              <div class="codehead">Example error</div>
+              <pre>bhul: ei variable ba value pawa jay nai (score).</pre>
+            </div>
+
+            <ul>
+              <li>Check spelling of variable names.</li>
+              <li>Check that every block has a closing brace.</li>
+              <li>Check quotation marks around text.</li>
+              <li>Check function argument counts.</li>
+              <li>Check that assignments contain an equals sign.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">
+    Ulta is an experimental language project for learning, satire,
+    and controlled chaos.
+  </footer>
+
+  <script>
+    class UltaInterpreter {
+      constructor(print) {
+        this.variables = new Map();
+        this.functions = new Map();
+        this.print = print;
+      }
+
+      interpret(code) {
+        this.variables.clear();
+        this.functions.clear();
+
+        const statements = this.parseCode(code);
+        this.executeStatements(statements, this.variables);
+      }
+
+      parseCode(code) {
+        const statements = [];
+        let i = 0;
+
+        while (i < code.length) {
+          while (
+            i < code.length &&
+            (/\s/.test(code[i]) || code[i] === ";")
+          ) {
+            i++;
+          }
+
+          if (i >= code.length) {
+            break;
+          }
+
+          const start = i;
+
+          while (
+            i < code.length &&
+            code[i] !== ";" &&
+            code[i] !== "{" &&
+            code[i] !== "}"
+          ) {
+            i++;
+          }
+
+          const header = code.slice(start, i).trim();
+
+          if (!header) {
+            i++;
+            continue;
+          }
+
+          const isBlock =
+            header.startsWith("jodi ") ||
+            header.startsWith("jotokhon ") ||
+            header.startsWith("nahole") ||
+            header.startsWith("kaaj ");
+
+          if (isBlock) {
+            while (i < code.length && /\s/.test(code[i])) {
+              i++;
+            }
+
+            if (code[i] !== "{") {
+              throw new Error(
+                "bhul: block er '{' pawa jay nai."
+              );
+            }
+
+            i++;
+
+            const bodyStart = i;
+            let depth = 1;
+            let quote = null;
+
+            while (i < code.length && depth > 0) {
+              const character = code[i];
+
+              if (quote) {
+                if (
+                  character === quote &&
+                  code[i - 1] !== "\\"
+                ) {
+                  quote = null;
+                }
+              } else {
+                if (
+                  character === '"' ||
+                  character === "'"
+                ) {
+                  quote = character;
+                } else if (character === "{") {
+                  depth++;
+                } else if (character === "}") {
+                  depth--;
+                }
+              }
+
+              i++;
+            }
+
+            if (depth !== 0) {
+              throw new Error(
+                "bhul: block er '}' pawa jay nai."
+              );
+            }
+
+            const body = code.slice(bodyStart, i - 1);
+
+            if (header.startsWith("kaaj ")) {
+              const match = header
+                .slice(5)
+                .trim()
+                .match(
+                  /^([A-Za-z_][A-Za-z0-9_]*)\s*\((.*?)\)$/
+                );
+
+              if (!match) {
+                throw new Error(
+                  "bhul: function er syntax thik nai."
+                );
+              }
+
+              const name = match[1];
+
+              const params = match[2].trim()
+                ? match[2]
+                    .split(",")
+                    .map(parameter => parameter.trim())
+                : [];
+
+              this.functions.set(name, {
+                params,
+                body: this.parseCode(body)
+              });
+            } else {
+              statements.push({
+                type: "block",
+                header,
+                code: body
+              });
+            }
+
+            continue;
+          }
+
+          if (code[i] === ";") {
+            i++;
+          }
+
+          statements.push({
+            type: "simple",
+            code: header
+          });
+        }
+
+        return statements;
+      }
+
+      executeStatements(statements, scope) {
+        for (let i = 0; i < statements.length; i++) {
+          const statement = statements[i];
+
+          if (statement.type === "simple") {
+            this.executeLine(statement.code, scope);
+            continue;
+          }
+
+          if (statement.header.startsWith("jodi ")) {
+            const condition = statement.header.slice(5);
+
+            if (this.evaluateCondition(condition, scope)) {
+              this.executeBlock(statement.code, scope);
+            } else {
+              const next = statements[i + 1];
+
+              if (
+                next &&
+                next.header.startsWith("nahole")
+              ) {
+                this.executeBlock(next.code, scope);
+                i++;
+              }
+            }
+
+            continue;
+          }
+
+          if (statement.header.startsWith("nahole")) {
+            continue;
+          }
+
+          if (statement.header.startsWith("jotokhon ")) {
+            this.executeWhile(
+              statement.header.slice(9),
+              statement.code,
+              scope
+            );
+          }
+        }
+      }
+
+      executeBlock(code, scope) {
+        const statements = this.parseCode(code);
+        this.executeStatements(statements.reverse(), scope);
+      }
+
+      executeWhile(condition, code, scope) {
+        let safety = 0;
+
+        while (
+          this.evaluateCondition(condition, scope) &&
+          safety < 1000
+        ) {
+          this.executeBlock(code, scope);
+          safety++;
+        }
+
+        if (safety >= 1000) {
+          throw new Error(
+            "bhul: loop sesh hocche na, infinite loop!"
+          );
+        }
+      }
+
+      executeLine(line, scope) {
+        line = line.trim();
+
+        const functionCall = line.match(
+          /^([A-Za-z_][A-Za-z0-9_]*)\s*\((.*?)\)$/
+        );
+
+        if (functionCall) {
+          const name = functionCall[1];
+
+          if (!this.functions.has(name)) {
+            throw new Error(
+              `bhul: ei function pawa jay nai (${name}).`
+            );
+          }
+
+          const functionData = this.functions.get(name);
+
+          const argumentsList = functionCall[2].trim()
+            ? functionCall[2]
+                .split(",")
+                .map(value =>
+                  this.evaluateExpression(value, scope)
+                )
+            : [];
+
+          if (
+            argumentsList.length !==
+            functionData.params.length
+          ) {
+            throw new Error(
+              "bhul: function er argument sankha milche na."
+            );
+          }
+
+          const localScope = new Map(scope);
+
+          functionData.params.forEach((parameter, index) => {
+            localScope.set(parameter, argumentsList[index]);
+          });
+
+          this.executeStatements(
+            [...functionData.body].reverse(),
+            localScope
+          );
+
+          return;
+        }
+
+        if (line.startsWith("dekhao ")) {
+          const value = this.evaluateExpression(
+            line.slice(7),
+            scope
+          );
+
+          this.print(value);
+          return;
+        }
+
+        if (line.startsWith("banao ")) {
+          const parts = line.slice(6).split("=");
+
+          if (parts.length < 2) {
+            throw new Error(
+              "bhul: variable declaration er syntax thik nai."
+            );
+          }
+
+          const name = parts[0].trim();
+          const expression = parts.slice(1).join("=");
+
+          if (
+            !/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)
+          ) {
+            throw new Error(
+              `bhul: variable er naam thik nai (${name}).`
+            );
+          }
+
+          scope.set(
+            name,
+            this.evaluateExpression(expression, scope)
+          );
+
+          return;
+        }
+
+        if (line.includes("=")) {
+          const parts = line.split("=");
+
+          const name = parts[0].trim();
+          const expression = parts.slice(1).join("=");
+
+          if (!scope.has(name)) {
+            throw new Error(
+              `bhul: ei variable ba value pawa jay nai (${name}).`
+            );
+          }
+
+          scope.set(
+            name,
+            this.evaluateExpression(expression, scope)
+          );
+
+          return;
+        }
+
+        throw new Error(
+          `bhul: ei line bujha gelo na (${line}).`
+        );
+      }
+
+      evaluateCondition(expression, scope) {
+        expression = expression.trim();
+
+        if (expression.includes("&&")) {
+          return expression
+            .split("&&")
+            .every(value =>
+              this.evaluateCondition(value, scope)
+            );
+        }
+
+        if (expression.includes("||")) {
+          return expression
+            .split("||")
+            .some(value =>
+              this.evaluateCondition(value, scope)
+            );
+        }
+
+        const operators = [
+          "==",
+          "!=",
+          ">=",
+          "<=",
+          ">",
+          "<"
+        ];
+
+        for (const operator of operators) {
+          if (expression.includes(operator)) {
+            const parts = expression.split(operator);
+
+            const left = this.evaluateExpression(
+              parts[0],
+              scope
+            );
+
+            const right = this.evaluateExpression(
+              parts.slice(1).join(operator),
+              scope
+            );
+
+            if (operator === "==") {
+              return left === right;
+            }
+
+            if (operator === "!=") {
+              return left !== right;
+            }
+
+            if (operator === ">") {
+              return Number(left) > Number(right);
+            }
+
+            if (operator === "<") {
+              return Number(left) < Number(right);
+            }
+
+            if (operator === ">=") {
+              return Number(left) >= Number(right);
+            }
+
+            if (operator === "<=") {
+              return Number(left) <= Number(right);
+            }
+          }
+        }
+
+        throw new Error(
+          `bhul: condition thik moto lekha hoyni (${expression}).`
+        );
+      }
+
+      evaluateExpression(expression, scope) {
+        expression = expression.trim();
+
+        if (
+          (
+            expression.startsWith('"') &&
+            expression.endsWith('"')
+          ) ||
+          (
+            expression.startsWith("'") &&
+            expression.endsWith("'")
+          )
+        ) {
+          return expression.slice(1, -1);
+        }
+
+        if (
+          expression !== "" &&
+          !isNaN(Number(expression))
+        ) {
+          return Number(expression);
+        }
+
+        if (scope.has(expression)) {
+          return scope.get(expression);
+        }
+
+        const operators = ["+", "-", "*", "/", "%"];
+
+        for (const operator of operators) {
+          const parts = expression.split(operator);
+
+          if (parts.length > 1) {
+            const values = parts.map(value =>
+              this.evaluateExpression(value, scope)
+            );
+
+            if (operator === "+") {
+              if (
+                values.some(value =>
+                  typeof value === "string"
+                )
+              ) {
+                return values.join("");
+              }
+
+              return values.reduce(
+                (total, value) => total + value,
+                0
+              );
+            }
+
+            if (operator === "-") {
+              return values
+                .slice(1)
+                .reduce(
+                  (total, value) => total - value,
+                  values[0]
+                );
+            }
+
+            if (operator === "*") {
+              return values.reduce(
+                (total, value) => total * value,
+                1
+              );
+            }
+
+            if (operator === "/") {
+              return values
+                .slice(1)
+                .reduce(
+                  (total, value) => total / value,
+                  values[0]
+                );
+            }
+
+            if (operator === "%") {
+              return values
+                .slice(1)
+                .reduce(
+                  (total, value) => total % value,
+                  values[0]
+                );
+            }
+          }
+        }
+
+        throw new Error(
+          `bhul: ei variable ba value pawa jay nai (${expression}).`
+        );
+      }
+    }
+
+    const samples = {
+      loop: `banao x = 0;
+
+jotokhon x < 3 {
+    x = x + 1;
+    dekhao x;
+}`,
+
+      math: `banao a = 8;
+banao b = 3;
+
+dekhao a + b;
+dekhao a - b;
+dekhao a * b;
+dekhao a / b;
+dekhao a % b;`,
+
+      ifelse: `banao x = 7;
+
+jodi x > 5 {
+    dekhao "besh bhalo";
+}
+nahole {
+    dekhao "abar chesta koro";
+}`,
+
+      function: `kaaj greet(name) {
+    dekhao "Hello, " + name;
+}
+
+greet("Bangladesh");`,
+
+      text: `dekhao "Hello, Bangladesh!";
+dekhao "Ulta is running.";`,
+
+      installation: `dekhao "Install Node.js";
+dekhao "Install Git";
+dekhao "git clone https://github.com/notmubasshir/Ulta-lang.git";
+dekhao "cd Ulta-lang";
+dekhao "npm install";
+dekhao "npm run dev";`
+    };
+
+    const code = document.getElementById("code");
+    const output = document.getElementById("output");
+    const runStatus = document.getElementById("runStatus");
+    const editorStatus = document.getElementById("editorStatus");
+    const samplesSelect = document.getElementById("samples");
+
+    function runProgram() {
+      output.classList.remove("error");
+      output.textContent = "";
+
+      runStatus.textContent = "Running...";
+      editorStatus.textContent = "Executing";
+
+      const logs = [];
+
+      try {
+        const engine = new UltaInterpreter(value => {
+          logs.push(String(value));
+        });
+
+        engine.interpret(code.value);
+
+        output.textContent = logs.length
+          ? logs.join("\n")
+          : "[Process exited with code 0]";
+
+        runStatus.textContent = "Success";
+        editorStatus.textContent = "Ready";
+      } catch (error) {
+        output.classList.add("error");
+
+        output.textContent =
+          error && error.message
+            ? error.message
+            : String(error);
+
+        runStatus.textContent = "Error";
+        editorStatus.textContent = "Fix the error";
+      }
+    }
+
+    document
+      .getElementById("run")
+      .addEventListener("click", runProgram);
+
+    document
+      .getElementById("clear")
+      .addEventListener("click", () => {
+        output.classList.remove("error");
+        output.textContent = "Console cleared.";
+        runStatus.textContent = "Idle";
+      });
+
+    document
+      .getElementById("reset")
+      .addEventListener("click", () => {
+        code.value = samples.loop;
+        samplesSelect.value = "loop";
+
+        output.classList.remove("error");
+        output.textContent =
+          "Click “Run script” to execute your Ulta code.";
+
+        runStatus.textContent = "Idle";
+        editorStatus.textContent = "Ready";
+      });
+
+    samplesSelect.addEventListener("change", event => {
+      code.value = samples[event.target.value];
+
+      output.classList.remove("error");
+      output.textContent = "Sample loaded. Click “Run script”.";
+
+      runStatus.textContent = "Idle";
+      editorStatus.textContent = "Ready";
+    });
+
+    code.addEventListener("keydown", event => {
+      if (event.key === "Tab") {
+        event.preventDefault();
+
+        code.setRangeText(
+          "    ",
+          code.selectionStart,
+          code.selectionEnd,
+          "end"
+        );
+      }
+
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === "Enter"
+      ) {
+        event.preventDefault();
+        runProgram();
+      }
+    });
+
+    const themeButton = document.getElementById("themeButton");
+
+    themeButton.addEventListener("click", () => {
+      const root = document.documentElement;
+
+      const nextTheme =
+        root.dataset.theme === "dark"
+          ? "light"
+          : "dark";
+
+      root.dataset.theme = nextTheme;
+
+      themeButton.textContent =
+        nextTheme === "dark"
+          ? "☀️"
+          : "🌙";
+    });
+  </script>
+</body>
+</html>
