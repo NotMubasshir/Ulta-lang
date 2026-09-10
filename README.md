@@ -131,18 +131,21 @@ The project may contain files similar to these:
 ```
 Ulta-lang/
 ├── src/
-│   └── interpreter.ts
-├── public/
+│   └── cli.ts
+│   └── main.ts
+├── LICENSE
 ├── index.html
 ├── package.json
 ├── tsconfig.json
 ├── logo.svg
-└── README.md
+├── README.md
+├── package-lock.json
+└──.gitignore
 ```
 
 The exact structure may change as the project develops.
 
-The interpreter contains the language logic.
+The main.ts contains the language logic.
 
 The web playground provides:
 
