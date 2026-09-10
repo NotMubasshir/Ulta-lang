@@ -3,7 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Ulta — Purno Ongsher Engine</title>
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("ulta-theme");
+      const theme =
+        saved === "light" || saved === "dark"
+          ? saved
+          : (
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: light)").matches
+                ? "light"
+                : "dark"
+            );
+
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
 
   <style>
     :root {
@@ -18,6 +36,7 @@
       --success: #63dfa0;
       --danger: #ff8194;
       --warning: #ffd166;
+      --shadow: #0003;
     }
 
     html[data-theme="light"] {
@@ -32,10 +51,7 @@
       --success: #168653;
       --danger: #c83c54;
       --warning: #a36b00;
-    }
-
-    * {
-      box-sizing: border-box;
+      --shadow: #10204018;
     }
 
     html {
@@ -47,8 +63,24 @@
       min-width: 320px;
       background: var(--bg);
       color: var(--text);
-      font-family: Inter, system-ui, sans-serif;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
       line-height: 1.6;
+      transition:
+        background-color 180ms ease,
+        color 180ms ease;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
     }
 
     button,
@@ -71,19 +103,32 @@
     pre,
     textarea,
     .mono {
-      font-family: "Cascadia Code", Consolas, monospace;
+      font-family:
+        "JetBrains Mono",
+        "Fira Code",
+        "Cascadia Code",
+        Consolas,
+        monospace;
     }
 
     .shell {
       width: min(1180px, calc(100% - 32px));
-      margin: auto;
+      margin-inline: auto;
     }
+
+    /* =========================================================
+       NAVBAR
+       ========================================================= */
 
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 10;
-      background: color-mix(in srgb, var(--bg) 94%, transparent);
+      z-index: 50;
+      background: color-mix(
+        in srgb,
+        var(--bg) 94%,
+        transparent
+      );
       backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--border);
     }
@@ -121,7 +166,9 @@
     }
 
     .brand b {
+      display: block;
       letter-spacing: -0.04em;
+      font-size: 17px;
     }
 
     .brand small {
@@ -133,7 +180,7 @@
     .nav {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
     }
 
     .nav a,
@@ -151,6 +198,14 @@
       background: var(--surface-2);
       border-color: var(--border);
     }
+
+    .theme-button {
+      min-width: 40px;
+    }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
 
     .hero {
       padding: 75px 0 50px;
@@ -192,6 +247,10 @@
       margin-top: 25px;
     }
 
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
     .btn {
       border: 1px solid var(--border);
       background: var(--surface-2);
@@ -199,10 +258,15 @@
       border-radius: 10px;
       padding: 10px 15px;
       font-weight: 750;
+      transition:
+        border-color 150ms ease,
+        transform 150ms ease,
+        background 150ms ease;
     }
 
     .btn:hover {
       border-color: var(--accent);
+      transform: translateY(-1px);
     }
 
     .btn.primary {
@@ -211,12 +275,16 @@
       color: white;
     }
 
+    /* =========================================================
+       TERMINAL HERO
+       ========================================================= */
+
     .terminal {
       overflow: hidden;
       border: 1px solid var(--border);
       border-radius: 19px;
       background: var(--code);
-      box-shadow: 0 20px 60px #0005;
+      box-shadow: 0 20px 60px var(--shadow);
       transform: rotate(1deg);
     }
 
@@ -267,6 +335,10 @@
       color: #65738b;
     }
 
+    /* =========================================================
+       SECTIONS
+       ========================================================= */
+
     .section {
       padding: 35px 0 75px;
     }
@@ -287,6 +359,10 @@
       max-width: 700px;
     }
 
+    /* =========================================================
+       PLAYGROUND
+       ========================================================= */
+
     .playground {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -299,7 +375,7 @@
       border: 1px solid var(--border);
       border-radius: 17px;
       background: var(--surface);
-      box-shadow: 0 20px 60px #0002;
+      box-shadow: 0 20px 60px var(--shadow);
     }
 
     .panel-head,
@@ -332,7 +408,7 @@
     }
 
     .sample {
-      max-width: 190px;
+      max-width: 210px;
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 7px;
@@ -376,12 +452,21 @@
 
     .output.error {
       color: #ff9baa;
-      background: color-mix(in srgb, var(--danger) 10%, var(--code));
+      background:
+        color-mix(
+          in srgb,
+          var(--danger) 10%,
+          var(--code)
+        );
     }
 
     .status {
       margin-left: auto;
     }
+
+    /* =========================================================
+       DOCUMENTATION
+       ========================================================= */
 
     .docs {
       display: grid;
@@ -422,6 +507,10 @@
       padding-top: 0;
     }
 
+    .doc:last-child {
+      border-bottom: 0;
+    }
+
     .doc h3 {
       font-size: 1.45rem;
       letter-spacing: -0.04em;
@@ -440,6 +529,51 @@
 
     .doc ul {
       padding-left: 20px;
+    }
+
+    .doc table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      font-size: 13px;
+    }
+
+    .doc th,
+    .doc td {
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+      border: 1px solid var(--border);
+    }
+
+    .doc th {
+      color: var(--text);
+      background: var(--surface-2);
+    }
+
+    .doc td {
+      color: var(--muted);
+    }
+
+    .error-code {
+      color: var(--accent);
+      font-weight: 800;
+      white-space: nowrap;
+      font-family:
+        "JetBrains Mono",
+        "Fira Code",
+        Consolas,
+        monospace;
+    }
+
+    .error-message {
+      color: var(--text);
+      font-family:
+        "JetBrains Mono",
+        "Fira Code",
+        Consolas,
+        monospace;
+      font-size: 12px;
     }
 
     .codebox {
@@ -469,14 +603,47 @@
     .callout {
       margin-top: 15px;
       padding: 16px;
-      border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--border));
+      border: 1px solid
+        color-mix(
+          in srgb,
+          var(--accent) 50%,
+          var(--border)
+        );
       border-radius: 12px;
-      background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+      background:
+        color-mix(
+          in srgb,
+          var(--accent) 12%,
+          var(--surface)
+        );
     }
 
     .callout strong {
       color: var(--accent);
     }
+
+    .danger-callout {
+      border-color:
+        color-mix(
+          in srgb,
+          var(--danger) 50%,
+          var(--border)
+        );
+      background:
+        color-mix(
+          in srgb,
+          var(--danger) 9%,
+          var(--surface)
+        );
+    }
+
+    .danger-callout strong {
+      color: var(--danger);
+    }
+
+    /* =========================================================
+       FOOTER / CREDIT
+       ========================================================= */
 
     footer {
       border-top: 1px solid var(--border);
@@ -484,6 +651,42 @@
       color: var(--muted);
       font-size: 12px;
     }
+
+    .credit {
+      text-align: center;
+      margin-top: 12px;
+      font-family:
+        "JetBrains Mono",
+        "Fira Code",
+        "Cascadia Code",
+        Consolas,
+        monospace;
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      opacity: 0.65;
+      transition:
+        color 180ms ease,
+        opacity 180ms ease;
+    }
+
+    .credit:hover {
+      opacity: 1;
+    }
+
+    .credit a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted currentColor;
+    }
+
+    .credit a:hover {
+      color: var(--accent);
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
 
     @media (max-width: 850px) {
       .hero {
@@ -509,6 +712,11 @@
 
       .doc-nav a {
         white-space: nowrap;
+      }
+
+      .doc table {
+        display: block;
+        overflow-x: auto;
       }
     }
 
@@ -544,11 +752,17 @@
 </head>
 
 <body>
+
+  <!-- =========================================================
+       NAVBAR
+       ========================================================= -->
+
   <header class="topbar">
     <div class="shell topbar-inner">
+
       <a class="brand" href="#">
         <span class="logo">
-          <img src="./logo.svg" alt="Ulta logo">
+          <img src="logo.svg" alt="Ulta logo">
         </span>
 
         <span>
@@ -578,11 +792,18 @@
           ☀️
         </button>
       </nav>
+
     </div>
   </header>
 
   <main>
+
+    <!-- =======================================================
+         HERO
+         ======================================================= -->
+
     <section class="shell hero">
+
       <div>
         <div class="eyebrow">
           Bangladeshi-inspired esoteric language
@@ -594,9 +815,9 @@
         </h1>
 
         <p>
-          Ulta is an experimental interpreted language with Banglish
-          keywords, arithmetic, variables, conditions, loops, functions,
-          and reverse block execution.
+          Ulta is an experimental interpreted language with
+          Banglish keywords, arithmetic, variables, conditions,
+          loops, functions, and reverse block execution.
         </p>
 
         <div class="actions">
@@ -611,6 +832,7 @@
       </div>
 
       <div class="terminal">
+
         <div class="termbar">
           <span class="dot"></span>
           <span class="dot"></span>
@@ -632,12 +854,20 @@
           <span class="green">2</span><br>
           <span class="green">3</span>
         </div>
+
       </div>
+
     </section>
 
+    <!-- =======================================================
+         PLAYGROUND
+         ======================================================= -->
+
     <section class="shell section" id="playground">
+
       <div class="heading">
         <div class="eyebrow">Live playground</div>
+
         <h2>Write. Run. Inspect.</h2>
 
         <p>
@@ -647,11 +877,21 @@
       </div>
 
       <div class="playground">
+
+        <!-- EDITOR -->
+
         <section class="panel">
+
           <div class="panel-head">
+
             <div>
-              <div class="panel-title">main.ulta</div>
-              <div class="meta">Ulta source code</div>
+              <div class="panel-title">
+                main.ulta
+              </div>
+
+              <div class="meta">
+                Ulta source code
+              </div>
             </div>
 
             <select
@@ -659,16 +899,49 @@
               id="samples"
               aria-label="Choose example"
             >
-              <option value="loop">Reverse loop</option>
-              <option value="math">Arithmetic</option>
-              <option value="ifelse">Jodi / nahole</option>
-              <option value="function">Function</option>
-              <option value="text">Text</option>
-              <option value="installation">Install commands</option>
+              <option value="loop">
+                Reverse loop
+              </option>
+
+              <option value="math">
+                Arithmetic
+              </option>
+
+              <option value="ifelse">
+                Jodi / nahole
+              </option>
+
+              <option value="logic">
+                Logical operators
+              </option>
+
+              <option value="function">
+                Function
+              </option>
+
+              <option value="text">
+                Text
+              </option>
+
+              <option value="types">
+                Data types
+              </option>
+
+              <option value="errors">
+                Error example
+              </option>
+
+              <option value="installation">
+                Install commands
+              </option>
             </select>
+
           </div>
 
-          <textarea id="code" spellcheck="false">banao x = 0;
+          <textarea
+            id="code"
+            spellcheck="false"
+          >banao x = 0;
 
 jotokhon x < 3 {
     x = x + 1;
@@ -676,28 +949,54 @@ jotokhon x < 3 {
 }</textarea>
 
           <div class="panel-foot">
-            <button class="btn primary" id="run" type="button">
+
+            <button
+              class="btn primary"
+              id="run"
+              type="button"
+            >
               ▶ Run script
             </button>
 
-            <button class="btn" id="reset" type="button">
+            <button
+              class="btn"
+              id="reset"
+              type="button"
+            >
               Reset
             </button>
 
-            <span class="status" id="editorStatus">
+            <span
+              class="status"
+              id="editorStatus"
+            >
               Ready
             </span>
+
           </div>
+
         </section>
 
+        <!-- OUTPUT -->
+
         <section class="panel">
+
           <div class="panel-head">
+
             <div>
-              <div class="panel-title">stdout</div>
-              <div class="meta">Captured program output</div>
+              <div class="panel-title">
+                stdout
+              </div>
+
+              <div class="meta">
+                Captured program output
+              </div>
             </div>
 
-            <span class="meta mono">Ctrl + Enter</span>
+            <span class="meta mono">
+              Ctrl + Enter
+            </span>
+
           </div>
 
           <pre
@@ -707,170 +1006,359 @@ jotokhon x < 3 {
           >Click “Run script” to execute your Ulta code.</pre>
 
           <div class="panel-foot">
-            <button class="btn" id="clear" type="button">
+
+            <button
+              class="btn"
+              id="clear"
+              type="button"
+            >
               Clear output
             </button>
 
-            <span class="status" id="runStatus">
+            <span
+              class="status"
+              id="runStatus"
+            >
               Idle
             </span>
+
           </div>
+
         </section>
+
       </div>
+
     </section>
 
+    <!-- =======================================================
+         DOCUMENTATION
+         ======================================================= -->
+
     <section class="shell section" id="docs">
+
       <div class="heading">
-        <div class="eyebrow">Language reference</div>
-        <h2>Documentation</h2>
+
+        <div class="eyebrow">
+          Language reference
+        </div>
+
+        <h2>
+          Documentation
+        </h2>
 
         <p>
-          Learn the syntax and install Ulta without leaving this page.
+          Syntax, execution rules, installation instructions,
+          examples, limits, and the complete Banglish error
+          reference for Ulta.
         </p>
+
       </div>
 
       <div class="docs">
+
+        <!-- DOCUMENTATION NAV -->
+
         <aside class="doc-nav">
-          <a href="#overview">Overview</a>
-          <a href="#installation">Installation</a>
-          <a href="#variables">Variables</a>
-          <a href="#math">Arithmetic</a>
-          <a href="#conditions">Conditions</a>
-          <a href="#loops">Loops</a>
-          <a href="#functions">Functions</a>
-          <a href="#gimmick">Gimmick</a>
-          <a href="#errors">Errors</a>
+
+          <a href="#overview">
+            Overview
+          </a>
+
+          <a href="#installation">
+            Installation
+          </a>
+
+          <a href="#syntax">
+            Syntax
+          </a>
+
+          <a href="#variables">
+            Variables
+          </a>
+
+          <a href="#types">
+            Data types
+          </a>
+
+          <a href="#strings">
+            Strings
+          </a>
+
+          <a href="#math">
+            Arithmetic
+          </a>
+
+          <a href="#conditions">
+            Conditions
+          </a>
+
+          <a href="#loops">
+            Loops
+          </a>
+
+          <a href="#functions">
+            Functions
+          </a>
+
+          <a href="#scope">
+            Scope
+          </a>
+
+          <a href="#gimmick">
+            Purno Ongsher
+          </a>
+
+          <a href="#limits">
+            Limits
+          </a>
+
+          <a href="#errors">
+            Bangla Errors
+          </a>
+
+          <a href="#examples">
+            Examples
+          </a>
+
         </aside>
 
         <div>
-          <article class="doc" id="overview">
-            <h3>Overview</h3>
+
+          <!-- =================================================
+               OVERVIEW
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="overview"
+          >
+
+            <h3>
+              Overview
+            </h3>
 
             <p>
-              Ulta is an interpreted language. Source code is parsed into
-              statements and then executed by the interpreter.
+              Ulta is an interpreted programming language.
+              Source code is parsed into statements and then
+              executed by the interpreter.
             </p>
 
             <p>
-              Statements normally end with semicolons. Blocks use curly
-              braces.
+              Ulta uses Banglish-inspired keywords such as
+              <code>banao</code>, <code>dekhao</code>,
+              <code>jodi</code>, <code>nahole</code>,
+              <code>jotokhon</code>, and <code>kaaj</code>.
+            </p>
+
+            <p>
+              Statements normally end with semicolons.
+              Blocks use curly braces.
             </p>
 
             <div class="callout">
-              <strong>Important:</strong>
-              The current engine reverses statements inside blocks and
-              function bodies.
+
+              <strong>
+                Important:
+              </strong>
+
+              Ulta's defining gimmick is that statements
+              inside blocks and function bodies execute in
+              reverse order.
+
             </div>
+
+            <div class="callout">
+
+              <strong>
+                Purno Ongsher:
+              </strong>
+
+              The reverse execution behavior is an intentional
+              language rule rather than a playground bug.
+
+            </div>
+
           </article>
 
-          <article class="doc" id="installation">
-            <h3>Installation Guide</h3>
+          <!-- =================================================
+               INSTALLATION
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="installation"
+          >
+
+            <h3>
+              Installation Guide
+            </h3>
 
             <p>
-              Follow these steps to install Ulta from the GitHub repository.
+              Follow these steps to install Ulta from the
+              GitHub repository.
             </p>
 
-            <h4>1. Install Node.js</h4>
+            <h4>
+              1. Install Node.js
+            </h4>
 
             <p>
-              Install Node.js from the official Node.js website.
-              npm is included with Node.js.
+              Install Node.js. npm is included with Node.js.
             </p>
 
             <div class="codebox">
-              <div class="codehead">Check Node.js and npm</div>
+
+              <div class="codehead">
+                Check Node.js and npm
+              </div>
+
               <pre>node --version
 npm --version</pre>
+
             </div>
 
-            <h4>2. Install Git</h4>
-
-            <p>
-              Install Git and verify that it is available.
-            </p>
+            <h4>
+              2. Install Git
+            </h4>
 
             <div class="codebox">
-              <div class="codehead">Check Git</div>
+
+              <div class="codehead">
+                Check Git
+              </div>
+
               <pre>git --version</pre>
+
             </div>
 
-            <h4>3. Clone the repository</h4>
+            <h4>
+              3. Clone the repository
+            </h4>
 
             <div class="codebox">
-              <div class="codehead">Terminal</div>
+
+              <div class="codehead">
+                Terminal
+              </div>
+
               <pre>git clone https://github.com/notmubasshir/Ulta-lang.git
 cd Ulta-lang</pre>
+
             </div>
 
-            <h4>4. Install dependencies</h4>
+            <h4>
+              4. Install dependencies
+            </h4>
 
             <div class="codebox">
-              <div class="codehead">Terminal</div>
+
+              <div class="codehead">
+                Terminal
+              </div>
+
               <pre>npm install</pre>
+
             </div>
 
-            <h4>5. View available commands</h4>
+            <h4>
+              5. View available commands
+            </h4>
 
             <div class="codebox">
-              <div class="codehead">Terminal</div>
+
+              <div class="codehead">
+                Terminal
+              </div>
+
               <pre>npm run</pre>
+
             </div>
 
-            <p>
-              This command displays the scripts configured in the project.
-            </p>
-
-            <h4>6. Start the development server</h4>
+            <h4>
+              6. Start development server
+            </h4>
 
             <div class="codebox">
-              <div class="codehead">Terminal</div>
+
+              <div class="codehead">
+                Terminal
+              </div>
+
               <pre>npm run dev</pre>
+
             </div>
 
-            <p>
-              Open the local URL shown in the terminal.
-            </p>
-
-            <h4>7. Build the project</h4>
+            <h4>
+              7. Build
+            </h4>
 
             <div class="codebox">
-              <div class="codehead">Terminal</div>
+
+              <div class="codehead">
+                Terminal
+              </div>
+
               <pre>npm run build</pre>
+
             </div>
 
-            <h4>8. Preview the production build</h4>
+            <h4>
+              8. Preview
+            </h4>
 
             <div class="codebox">
-              <div class="codehead">Terminal</div>
+
+              <div class="codehead">
+                Terminal
+              </div>
+
               <pre>npm run preview</pre>
+
             </div>
 
-            <h4>Common installation problems</h4>
+            <h4>
+              Common installation problems
+            </h4>
 
             <ul>
+
               <li>
-                <strong>npm is not recognized:</strong>
-                install Node.js and restart Visual Studio Code.
+                <strong>
+                  npm is not recognized:
+                </strong>
+                install Node.js and restart VS Code.
               </li>
 
               <li>
-                <strong>Cannot find module:</strong>
-                make sure the terminal is inside the Ulta-lang folder.
+                <strong>
+                  Cannot find module:
+                </strong>
+                make sure the terminal is inside
+                the Ulta-lang folder.
               </li>
 
               <li>
-                <strong>Dependencies are missing:</strong>
+                <strong>
+                  Dependencies are missing:
+                </strong>
                 run <code>npm install</code> again.
               </li>
 
               <li>
-                <strong>Unknown npm command:</strong>
-                run <code>npm run</code> to see the available scripts.
+                <strong>
+                  Unknown npm command:
+                </strong>
+                run <code>npm run</code>.
               </li>
+
             </ul>
 
             <div class="callout">
-              <strong>Repository:</strong>
+
+              <strong>
+                Repository:
+              </strong>
+
               <a
                 href="https://github.com/notmubasshir/Ulta-lang"
                 target="_blank"
@@ -878,35 +1366,328 @@ cd Ulta-lang</pre>
               >
                 github.com/notmubasshir/Ulta-lang
               </a>
+
             </div>
+
           </article>
 
-          <article class="doc" id="variables">
-            <h3>Variables</h3>
+          <!-- =================================================
+               SYNTAX
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="syntax"
+          >
+
+            <h3>
+              Basic Syntax
+            </h3>
 
             <p>
-              Use <code>banao</code> to create a variable.
-              Assignment updates an existing variable.
+              A simple Ulta program is made from declarations,
+              assignments, output statements, blocks, and
+              function calls.
             </p>
 
             <div class="codebox">
-              <div class="codehead">variables.ulta</div>
+
+              <div class="codehead">
+                basic.ulta
+              </div>
+
+              <pre>banao x = 10;
+x = x + 5;
+dekhao x;</pre>
+
+            </div>
+
+            <h4>
+              Semicolons
+            </h4>
+
+            <p>
+              Simple statements are normally terminated with
+              <code>;</code>.
+            </p>
+
+            <h4>
+              Blocks
+            </h4>
+
+            <p>
+              Conditional, loop, and function bodies use
+              <code>{ ... }</code>.
+            </p>
+
+            <div class="codebox">
+
+              <pre>jodi x > 5 {
+    dekhao x;
+}</pre>
+
+            </div>
+
+            <h4>
+              Comments
+            </h4>
+
+            <p>
+              The current TypeScript grammar should be treated
+              as the authoritative implementation. Do not rely
+              on undocumented comment syntax.
+            </p>
+
+          </article>
+
+          <!-- =================================================
+               VARIABLES
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="variables"
+          >
+
+            <h3>
+              Variables
+            </h3>
+
+            <p>
+              Use <code>banao</code> to declare a variable.
+              Assignment changes an existing variable.
+            </p>
+
+            <div class="codebox">
+
+              <div class="codehead">
+                variables.ulta
+              </div>
+
               <pre>banao score = 10;
 score = score + 5;
 dekhao score;</pre>
+
             </div>
+
+            <h4>
+              Variable naming rules
+            </h4>
+
+            <ul>
+
+              <li>
+                A name may begin with a letter or
+                underscore.
+              </li>
+
+              <li>
+                The remaining characters may be letters,
+                numbers, or underscores.
+              </li>
+
+              <li>
+                A variable cannot start with a number.
+              </li>
+
+              <li>
+                Reserved language keywords cannot be used
+                as variable names.
+              </li>
+
+            </ul>
+
+            <div class="codebox">
+
+              <div class="codehead">
+                valid
+              </div>
+
+              <pre>banao score = 10;
+banao player_name = "Mubasshir";
+banao _value = 20;</pre>
+
+            </div>
+
           </article>
 
-          <article class="doc" id="math">
-            <h3>Arithmetic</h3>
+          <!-- =================================================
+               TYPES
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="types"
+          >
+
+            <h3>
+              Data Types
+            </h3>
 
             <p>
-              Ulta supports addition, subtraction, multiplication,
-              division, and remainder.
+              Ulta values can be:
+            </p>
+
+            <ul>
+
+              <li>
+                Numbers
+              </li>
+
+              <li>
+                Strings
+              </li>
+
+              <li>
+                Booleans
+              </li>
+
+              <li>
+                <code>null</code>
+              </li>
+
+            </ul>
+
+            <h4>
+              Boolean values
+            </h4>
+
+            <p>
+              Ulta supports the Banglish boolean names
+              <code>sotti</code> and <code>bhul</code>.
             </p>
 
             <div class="codebox">
-              <div class="codehead">math.ulta</div>
+
+              <pre>banao a = sotti;
+banao b = bhul;
+
+dekhao a;
+dekhao b;</pre>
+
+            </div>
+
+            <h4>
+              Null
+            </h4>
+
+            <div class="codebox">
+
+              <pre>banao value = null;
+dekhao value;</pre>
+
+            </div>
+
+          </article>
+
+          <!-- =================================================
+               STRINGS
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="strings"
+          >
+
+            <h3>
+              Strings
+            </h3>
+
+            <p>
+              Strings may use single or double quotation marks.
+            </p>
+
+            <div class="codebox">
+
+              <pre>dekhao "Hello";
+dekhao 'Bangladesh';</pre>
+
+            </div>
+
+            <h4>
+              String escapes
+            </h4>
+
+            <p>
+              Supported escapes include:
+            </p>
+
+            <ul>
+
+              <li>
+                <code>\n</code> — newline
+              </li>
+
+              <li>
+                <code>\t</code> — tab
+              </li>
+
+              <li>
+                <code>\"</code> — double quote
+              </li>
+
+              <li>
+                <code>\'</code> — single quote
+              </li>
+
+              <li>
+                <code>\\</code> — backslash
+              </li>
+
+            </ul>
+
+            <div class="codebox">
+
+              <pre>dekhao "Hello\nBangladesh";
+dekhao "Name:\tUlta";</pre>
+
+            </div>
+
+          </article>
+
+          <!-- =================================================
+               ARITHMETIC
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="math"
+          >
+
+            <h3>
+              Arithmetic
+            </h3>
+
+            <p>
+              Ulta supports:
+            </p>
+
+            <ul>
+
+              <li>
+                <code>+</code> addition / string concatenation
+              </li>
+
+              <li>
+                <code>-</code> subtraction
+              </li>
+
+              <li>
+                <code>*</code> multiplication
+              </li>
+
+              <li>
+                <code>/</code> division
+              </li>
+
+              <li>
+                <code>%</code> remainder
+              </li>
+
+            </ul>
+
+            <div class="codebox">
+
               <pre>banao a = 8;
 banao b = 3;
 
@@ -915,11 +1696,47 @@ dekhao a - b;
 dekhao a * b;
 dekhao a / b;
 dekhao a % b;</pre>
+
             </div>
+
+            <h4>
+              String concatenation
+            </h4>
+
+            <div class="codebox">
+
+              <pre>banao name = "Ulta";
+dekhao "Hello, " + name;</pre>
+
+            </div>
+
+            <div class="callout danger-callout">
+
+              <strong>
+                Arithmetic restriction:
+              </strong>
+
+              <p>
+                Subtraction, multiplication, division, and
+                modulo require numeric operands.
+              </p>
+
+            </div>
+
           </article>
 
-          <article class="doc" id="conditions">
-            <h3>Conditions</h3>
+          <!-- =================================================
+               CONDITIONS
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="conditions"
+          >
+
+            <h3>
+              Conditions
+            </h3>
 
             <p>
               Use <code>jodi</code> for a condition and
@@ -927,257 +1744,1811 @@ dekhao a % b;</pre>
             </p>
 
             <div class="codebox">
-              <div class="codehead">conditions.ulta</div>
+
               <pre>banao x = 7;
 
 jodi x > 5 {
     dekhao "besh bhalo";
 }
+
 nahole {
     dekhao "abar chesta koro";
 }</pre>
+
             </div>
+
+            <h4>
+              Comparisons
+            </h4>
+
+            <ul>
+
+              <li>
+                <code>==</code>
+              </li>
+
+              <li>
+                <code>!=</code>
+              </li>
+
+              <li>
+                <code>&gt;</code>
+              </li>
+
+              <li>
+                <code>&lt;</code>
+              </li>
+
+              <li>
+                <code>&gt;=</code>
+              </li>
+
+              <li>
+                <code>&lt;=</code>
+              </li>
+
+            </ul>
+
+            <h4>
+              Logical operators
+            </h4>
+
+            <ul>
+
+              <li>
+                <code>&amp;&amp;</code> — AND
+              </li>
+
+              <li>
+                <code>||</code> — OR
+              </li>
+
+              <li>
+                <code>!</code> — NOT
+              </li>
+
+            </ul>
+
+            <div class="codebox">
+
+              <pre>banao age = 18;
+banao student = sotti;
+
+jodi age >= 16 && student == sotti {
+    dekhao "allowed";
+}</pre>
+
+            </div>
+
           </article>
 
-          <article class="doc" id="loops">
-            <h3>Loops</h3>
+          <!-- =================================================
+               LOOPS
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="loops"
+          >
+
+            <h3>
+              Loops
+            </h3>
 
             <p>
-              Use <code>jotokhon</code> to repeat a block while its
-              condition is true.
+              Use <code>jotokhon</code> to repeat a block while
+              its condition remains true.
             </p>
 
             <div class="codebox">
-              <div class="codehead">loops.ulta</div>
+
+              <div class="codehead">
+                loops.ulta
+              </div>
+
               <pre>banao x = 0;
 
 jotokhon x < 3 {
     x = x + 1;
     dekhao x;
 }</pre>
+
             </div>
 
             <div class="callout">
-              <strong>Remember:</strong>
-              Statements inside the loop execute from bottom to top.
+
+              <strong>
+                Important:
+              </strong>
+
+              Statements inside the loop body execute from
+              bottom to top because the block is reversed.
             </div>
+
+            <p>
+              The interpreter limits a loop to
+              <strong>1000 iterations</strong>.
+            </p>
+
           </article>
 
-          <article class="doc" id="functions">
-            <h3>Functions</h3>
+          <!-- =================================================
+               FUNCTIONS
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="functions"
+          >
+
+            <h3>
+              Functions
+            </h3>
 
             <p>
               Declare a function using <code>kaaj</code>.
-              Function parameters are written inside parentheses.
             </p>
 
             <div class="codebox">
-              <div class="codehead">functions.ulta</div>
+
+              <div class="codehead">
+                functions.ulta
+              </div>
+
               <pre>kaaj greet(name) {
     dekhao "Hello, " + name;
 }
 
 greet("Bangladesh");</pre>
+
             </div>
+
+            <h4>
+              Multiple parameters
+            </h4>
+
+            <div class="codebox">
+
+              <pre>kaaj add(a, b) {
+    dekhao a + b;
+}
+
+add(10, 20);</pre>
+
+            </div>
+
+            <h4>
+              Function rules
+            </h4>
+
+            <ul>
+
+              <li>
+                Parameters must have valid variable names.
+              </li>
+
+              <li>
+                Duplicate parameter names are rejected.
+              </li>
+
+              <li>
+                A function may have at most 20 parameters.
+              </li>
+
+              <li>
+                The number of arguments must exactly match
+                the number of parameters.
+              </li>
+
+              <li>
+                Function calls do not produce expression
+                return values.
+              </li>
+
+              <li>
+                Function execution is affected by reverse
+                block execution.
+              </li>
+
+              <li>
+                Maximum function call depth is 100.
+              </li>
+
+            </ul>
+
           </article>
 
-          <article class="doc" id="gimmick">
-            <h3>The Purno Ongsher Gimmick</h3>
+          <!-- =================================================
+               SCOPE
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="scope"
+          >
+
+            <h3>
+              Scope
+            </h3>
 
             <p>
-              Ulta reverses parsed statements inside blocks and function
-              bodies. This is an intentional language rule.
+              Function calls create a local scope based on the
+              caller's current scope.
+            </p>
+
+            <p>
+              Function arguments are evaluated in the caller's
+              scope before parameters are assigned.
             </p>
 
             <div class="codebox">
-              <div class="codehead">reverse.ulta</div>
+
+              <pre>banao x = 10;
+
+kaaj show(value) {
+    dekhao value;
+}
+
+show(x);</pre>
+
+            </div>
+
+          </article>
+
+          <!-- =================================================
+               PURNO ONGSHER
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="gimmick"
+          >
+
+            <h3>
+              The Purno Ongsher Gimmick
+            </h3>
+
+            <p>
+              Ulta reverses parsed statements inside blocks and
+              function bodies.
+            </p>
+
+            <p>
+              This is the core joke and defining behavior of
+              the language.
+            </p>
+
+            <div class="codebox">
+
+              <div class="codehead">
+                reverse.ulta
+              </div>
+
               <pre>banao x = 0;
 
 jotokhon x < 3 {
     dekhao x;
     x = x + 1;
 }</pre>
+
             </div>
 
             <p>
-              In this example, the assignment may execute before the output
-              statement because the block is reversed.
+              The body is parsed and then executed in reverse
+              order. Therefore the assignment can occur before
+              the output statement.
             </p>
+
+            <div class="callout">
+
+              <strong>
+                Purno Ongsher Engine:
+              </strong>
+
+              "Ulta" is not merely the name — execution inside
+              blocks is intentionally ulta.
+            </div>
+
           </article>
 
-          <article class="doc" id="errors">
-            <h3>Error Messages</h3>
+          <!-- =================================================
+               LIMITS
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="limits"
+          >
+
+            <h3>
+              Interpreter Limits
+            </h3>
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>
+                    Limit
+                  </th>
+
+                  <th>
+                    Value
+                  </th>
+
+                  <th>
+                    Purpose
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                <tr>
+                  <td>
+                    Loop iterations
+                  </td>
+
+                  <td>
+                    <code>1000</code>
+                  </td>
+
+                  <td>
+                    Prevents runaway loops.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    Function call depth
+                  </td>
+
+                  <td>
+                    <code>100</code>
+                  </td>
+
+                  <td>
+                    Prevents uncontrolled recursion.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    Function parameters
+                  </td>
+
+                  <td>
+                    <code>20</code>
+                  </td>
+
+                  <td>
+                    Keeps declarations manageable.
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </article>
+
+          <!-- =================================================
+               BANGla ERROR DOCUMENTATION
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="errors"
+          >
+
+            <h3>
+              Bangla Error Messages
+            </h3>
 
             <p>
-              Common errors usually come from invalid syntax, missing
-              variables, missing functions, or incomplete blocks.
+              Ulta's interpreter uses structured error codes.
+              Each error contains a code, a Banglish/Bangla
+              message, and a hint explaining how to fix it.
             </p>
+
+            <div class="callout">
+
+              <strong>
+                Error format:
+              </strong>
+
+              <pre class="mono">[E###] Line N: message
+  Code: source line
+  Hint: ki korte hobe</pre>
+
+            </div>
+
+            <p>
+              The following reference documents the complete
+              <strong>E004–E044</strong> error range used by
+              the TypeScript interpreter.
+            </p>
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>
+                    Code
+                  </th>
+
+                  <th>
+                    Bangla / Banglish error message
+                  </th>
+
+                  <th>
+                    Hint
+                  </th>
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                <tr>
+                  <td class="error-code">
+                    E004
+                  </td>
+
+                  <td class="error-message">
+                    Unexpected closing brace '}'.
+                  </td>
+
+                  <td>
+                    Check koro prottekta block-er jonno
+                    matching '{' ache kina.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E005
+                  </td>
+
+                  <td class="error-message">
+                    Block-er pore '{' pawa jayni.
+                  </td>
+
+                  <td>
+                    Block header-er pore opening brace
+                    '{' dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E006
+                  </td>
+
+                  <td class="error-message">
+                    Block-er closing '}' pawa jayni.
+                  </td>
+
+                  <td>
+                    Block-er sheshe matching '}' dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E007
+                  </td>
+
+                  <td class="error-message">
+                    Function declaration-er syntax vul.
+                  </td>
+
+                  <td>
+                    Correct format:
+                    <code>kaaj functionName(x, y) { ... }</code>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E008
+                  </td>
+
+                  <td class="error-message">
+                    Function parameter-er naam thik nai.
+                  </td>
+
+                  <td>
+                    Parameter-er naam letter ba underscore
+                    diye shuru koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E009
+                  </td>
+
+                  <td class="error-message">
+                    Function-e duplicate parameter ache.
+                  </td>
+
+                  <td>
+                    Prottek parameter-er alada naam dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E010
+                  </td>
+
+                  <td class="error-message">
+                    Ei block bujha gelo na.
+                  </td>
+
+                  <td>
+                    Supported block holo
+                    <code>jodi</code>,
+                    <code>nahole</code>,
+                    <code>jotokhon</code>, ebong
+                    <code>kaaj</code>.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E011
+                  </td>
+
+                  <td class="error-message">
+                    Loop 1000 iteration-er beshi cholte parbe na.
+                  </td>
+
+                  <td>
+                    Condition check koro, jate loop eventually
+                    false hoy.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E012
+                  </td>
+
+                  <td class="error-message">
+                    <code>dekhao</code>-er value deya hoyni ba
+                    syntax thik nai.
+                  </td>
+
+                  <td>
+                    Example:
+                    <code>dekhao x;</code>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E013
+                  </td>
+
+                  <td class="error-message">
+                    <code>banao</code>-te '=' pawa jayni.
+                  </td>
+
+                  <td>
+                    Example:
+                    <code>banao x = 10;</code>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E014
+                  </td>
+
+                  <td class="error-message">
+                    Variable-er value khali rakha jabe na.
+                  </td>
+
+                  <td>
+                    '=' er pore valid expression dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E015
+                  </td>
+
+                  <td class="error-message">
+                    Ei variable age declare kora hoyni.
+                  </td>
+
+                  <td>
+                    Age
+                    <code>banao name = value;</code>
+                    use koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E016
+                  </td>
+
+                  <td class="error-message">
+                    Assignment-er value khali.
+                  </td>
+
+                  <td>
+                    Assignment-er pore ekta valid expression dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E017
+                  </td>
+
+                  <td class="error-message">
+                    Ei line bujha gelo na.
+                  </td>
+
+                  <td>
+                    Line-er syntax check koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E018
+                  </td>
+
+                  <td class="error-message">
+                    Ei name-er kono function nei.
+                  </td>
+
+                  <td>
+                    Age function banao:
+                    <code>kaaj name() { ... }</code>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E019
+                  </td>
+
+                  <td class="error-message">
+                    Function-er argument shongkha milche na.
+                  </td>
+
+                  <td>
+                    Je koyta parameter ache, thik shei koyta
+                    argument dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E020
+                  </td>
+
+                  <td class="error-message">
+                    Function call depth-er limit cross koreche.
+                  </td>
+
+                  <td>
+                    Recursion komao. Maximum depth 100.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E021
+                  </td>
+
+                  <td class="error-message">
+                    Condition khali rakha jabe na.
+                  </td>
+
+                  <td>
+                    Example:
+                    <code>jodi x &gt; 5 { ... }</code>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E022
+                  </td>
+
+                  <td class="error-message">
+                    Condition incomplete.
+                  </td>
+
+                  <td>
+                    Comparison-er dui pashei valid value dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E023
+                  </td>
+
+                  <td class="error-message">
+                    Condition theke boolean value pawa jayni.
+                  </td>
+
+                  <td>
+                    Condition-er result
+                    <code>sotti</code> ba
+                    <code>bhul</code> hote hobe.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E024
+                  </td>
+
+                  <td class="error-message">
+                    Expression khali.
+                  </td>
+
+                  <td>
+                    Expression-er moddhe ekta valid value dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E025
+                  </td>
+
+                  <td class="error-message">
+                    Operator sudhu number-er sathe use kora jabe.
+                  </td>
+
+                  <td>
+                    Arithmetic-er jonno numeric value use koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E026
+                  </td>
+
+                  <td class="error-message">
+                    Zero diye division kora jabe na.
+                  </td>
+
+                  <td>
+                    Divisor zero kina check koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E027
+                  </td>
+
+                  <td class="error-message">
+                    Function call expression-er vitore use kora
+                    jabe na.
+                  </td>
+
+                  <td>
+                    Function call alada statement hisebe use koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E028
+                  </td>
+
+                  <td class="error-message">
+                    Ei variable ba value pawa jay nai.
+                  </td>
+
+                  <td>
+                    Variable declare kora hoyeche kina ebong
+                    spelling thik ache kina check koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E029
+                  </td>
+
+                  <td class="error-message">
+                    Ei comparison-er jonno numeric value dorkar.
+                  </td>
+
+                  <td>
+                    <code>&gt;</code>,
+                    <code>&lt;</code>,
+                    <code>&gt;=</code>,
+                    <code>&lt;=</code>-er jonno number use koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E030
+                  </td>
+
+                  <td class="error-message">
+                    Variable-er naam valid na.
+                  </td>
+
+                  <td>
+                    Letter ba underscore diye naam shuru koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E031
+                  </td>
+
+                  <td class="error-message">
+                    Reserved keyword variable name hisebe use
+                    kora jabe na.
+                  </td>
+
+                  <td>
+                    Onno ekta variable name use koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E032
+                  </td>
+
+                  <td class="error-message">
+                    Function argument khali.
+                  </td>
+
+                  <td>
+                    Comma-r majhe valid argument dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E033
+                  </td>
+
+                  <td class="error-message">
+                    Function-e 20-er beshi parameter deya jabe na.
+                  </td>
+
+                  <td>
+                    Parameter-er shongkha 20 ba tar kom rakho.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E034
+                  </td>
+
+                  <td class="error-message">
+                    Reserved command function name hisebe use
+                    kora jabe na.
+                  </td>
+
+                  <td>
+                    <code>jodi</code>,
+                    <code>nahole</code>,
+                    <code>banao</code>,
+                    <code>dekhao</code> etc. avoid koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E035
+                  </td>
+
+                  <td class="error-message">
+                    <code>jotokhon</code>-er condition khali.
+                  </td>
+
+                  <td>
+                    Example:
+                    <code>jotokhon x &lt; 10 { ... }</code>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E036
+                  </td>
+
+                  <td class="error-message">
+                    Loop-er variable/state change hocche na.
+                  </td>
+
+                  <td>
+                    Loop-er vitore condition-ke affect kore emon
+                    value update koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E037
+                  </td>
+
+                  <td class="error-message">
+                    <code>&amp;&amp;</code> operator-er use thik nai.
+                  </td>
+
+                  <td>
+                    Duita valid condition-er majhe
+                    <code>&amp;&amp;</code> use koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E038
+                  </td>
+
+                  <td class="error-message">
+                    <code>||</code> operator-er use thik nai.
+                  </td>
+
+                  <td>
+                    Duita valid condition-er majhe
+                    <code>||</code> use koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E039
+                  </td>
+
+                  <td class="error-message">
+                    Variable-er naam khali.
+                  </td>
+
+                  <td>
+                    Variable-er jonno ekta valid naam dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E040
+                  </td>
+
+                  <td class="error-message">
+                    Variable-er naam number diye shuru kora jabe na.
+                  </td>
+
+                  <td>
+                    Example:
+                    <code>score1</code> valid,
+                    <code>1score</code> invalid.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E041
+                  </td>
+
+                  <td class="error-message">
+                    Arithmetic expression incomplete.
+                  </td>
+
+                  <td>
+                    Operator-er dui pashe valid value dao.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E042
+                  </td>
+
+                  <td class="error-message">
+                    Zero diye modulo kora jabe na.
+                  </td>
+
+                  <td>
+                    <code>%</code>-er right side zero kina
+                    check koro.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E043
+                  </td>
+
+                  <td class="error-message">
+                    Ei variable already declare kora hoyeche.
+                  </td>
+
+                  <td>
+                    Same scope-e ekoi variable abar
+                    <code>banao</code> koro na.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="error-code">
+                    E044
+                  </td>
+
+                  <td class="error-message">
+                    String quotation bondho hoyni.
+                  </td>
+
+                  <td>
+                    String-er closing <code>"</code> ba
+                    <code>'</code> dao.
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+            <div class="callout">
+
+              <strong>
+                Example:
+              </strong>
+
+              <div class="codebox">
+
+                <pre>[E028] Line 1: Ei variable ba value pawa jay nai: 'score'.
+  Code: dekhao score;
+  Hint: Variable declare kora hoyeche kina ebong spelling thik ache kina check koro.</pre>
+
+              </div>
+
+            </div>
+
+          </article>
+
+          <!-- =================================================
+               EXAMPLES
+               ================================================= -->
+
+          <article
+            class="doc"
+            id="examples"
+          >
+
+            <h3>
+              Complete Examples
+            </h3>
+
+            <h4>
+              Variables + arithmetic
+            </h4>
 
             <div class="codebox">
-              <div class="codehead">Example error</div>
-              <pre>bhul: ei variable ba value pawa jay nai (score).</pre>
+
+              <pre>banao a = 10;
+banao b = 20;
+banao total = a + b;
+
+dekhao total;</pre>
+
             </div>
 
-            <ul>
-              <li>Check spelling of variable names.</li>
-              <li>Check that every block has a closing brace.</li>
-              <li>Check quotation marks around text.</li>
-              <li>Check function argument counts.</li>
-              <li>Check that assignments contain an equals sign.</li>
-            </ul>
+            <h4>
+              Conditional
+            </h4>
+
+            <div class="codebox">
+
+              <pre>banao score = 85;
+
+jodi score >= 80 {
+    dekhao "Excellent";
+}
+nahole {
+    dekhao "Keep trying";
+}</pre>
+
+            </div>
+
+            <h4>
+              Logical conditions
+            </h4>
+
+            <div class="codebox">
+
+              <pre>banao age = 18;
+banao student = sotti;
+
+jodi age >= 16 && student == sotti {
+    dekhao "Eligible";
+}</pre>
+
+            </div>
+
+            <h4>
+              Loop
+            </h4>
+
+            <div class="codebox">
+
+              <pre>banao x = 0;
+
+jotokhon x < 5 {
+    x = x + 1;
+    dekhao x;
+}</pre>
+
+            </div>
+
+            <h4>
+              Function
+            </h4>
+
+            <div class="codebox">
+
+              <pre>kaaj greet(name) {
+    dekhao "Hello, " + name;
+}
+
+greet("Mubasshir");</pre>
+
+            </div>
+
+            <h4>
+              Strings
+            </h4>
+
+            <div class="codebox">
+
+              <pre>banao first = "Bangla";
+banao second = "sh";
+dekhao first + second;</pre>
+
+            </div>
+
           </article>
+
         </div>
+
       </div>
+
     </section>
+
   </main>
 
-  <footer class="shell">
-    Ulta is an experimental language project for learning, satire,
-    and controlled chaos.
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+
+  <footer>
+
+    <div class="shell">
+
+      <div>
+        Ulta — experimental Bengali-inspired programming
+        language.
+      </div>
+
+      <div class="credit">
+        made by
+        <a
+          href="https://github.com/notmubasshir/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          notmubasshir
+        </a>
+      </div>
+
+    </div>
+
   </footer>
 
+  <!-- =========================================================
+       INTERPRETER
+       ========================================================= -->
+
   <script>
+
+    class UltaError extends Error {
+
+      constructor(
+        code,
+        message,
+        options = {}
+      ) {
+
+        super(message);
+
+        this.name = "UltaError";
+        this.code = code;
+        this.line = options.line;
+        this.sourceLine = options.sourceLine;
+        this.hint = options.hint;
+
+      }
+
+      toString() {
+
+        const lineInfo =
+          this.line
+            ? `Line ${this.line}: `
+            : "";
+
+        const sourceInfo =
+          this.sourceLine
+            ? `\n  Code: ${this.sourceLine.trim()}`
+            : "";
+
+        const hintInfo =
+          this.hint
+            ? `\n  Hint: ${this.hint}`
+            : "";
+
+        return (
+          `[${this.code}] ` +
+          lineInfo +
+          this.message +
+          sourceInfo +
+          hintInfo
+        );
+
+      }
+
+    }
+
     class UltaInterpreter {
-      constructor(print) {
+
+      constructor() {
+
         this.variables = new Map();
         this.functions = new Map();
-        this.print = print;
+
+        this.output = [];
+        this.sourceLines = [];
+
+        this.maxLoopIterations = 1000;
+        this.maxCallDepth = 100;
+
+        this.callDepth = 0;
+
       }
 
       interpret(code) {
+
         this.variables.clear();
         this.functions.clear();
 
-        const statements = this.parseCode(code);
-        this.executeStatements(statements, this.variables);
+        this.output = [];
+        this.sourceLines = code.split(/\r?\n/);
+        this.callDepth = 0;
+
+        const statements =
+          this.parseCode(code);
+
+        this.executeStatements(
+          statements,
+          this.variables
+        );
+
+        return [...this.output];
+
       }
 
-      parseCode(code) {
+      error(
+        code,
+        message,
+        line,
+        hint
+      ) {
+
+        throw new UltaError(
+          code,
+          message,
+          {
+            line,
+            sourceLine:
+              line
+                ? this.sourceLines[line - 1]
+                : undefined,
+            hint
+          }
+        );
+
+      }
+
+      isReserved(word) {
+
+        return [
+          "banao",
+          "dekhao",
+          "jodi",
+          "nahole",
+          "jotokhon",
+          "kaaj",
+          "sotti",
+          "bhul",
+          "null"
+        ].includes(word);
+
+      }
+
+      validateVariableName(
+        name,
+        line
+      ) {
+
+        if (!name) {
+
+          this.error(
+            "E039",
+            "Variable-er naam khali.",
+            line,
+            "Variable-er jonno ekta valid naam dao."
+          );
+
+        }
+
+        if (/^\d/.test(name)) {
+
+          this.error(
+            "E040",
+            "Variable-er naam number diye shuru kora jabe na.",
+            line,
+            "Letter ba underscore diye variable-er naam shuru koro."
+          );
+
+        }
+
+        if (
+          !/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)
+        ) {
+
+          this.error(
+            "E030",
+            "Variable-er naam valid na.",
+            line,
+            "Letter ba underscore diye naam shuru koro; pore letter, number, ba underscore use koro."
+          );
+
+        }
+
+        if (this.isReserved(name)) {
+
+          this.error(
+            "E031",
+            "Reserved keyword variable name hisebe use kora jabe na.",
+            line,
+            "Onno ekta variable name use koro."
+          );
+
+        }
+
+      }
+
+      parseCode(
+        code,
+        startingLine = 1
+      ) {
+
         const statements = [];
+
         let i = 0;
+        let line = startingLine;
 
         while (i < code.length) {
+
           while (
             i < code.length &&
-            (/\s/.test(code[i]) || code[i] === ";")
+            /\s/.test(code[i])
           ) {
+
+            if (code[i] === "\n") {
+              line++;
+            }
+
             i++;
+
+          }
+
+          while (
+            i < code.length &&
+            code[i] === ";"
+          ) {
+
+            i++;
+
           }
 
           if (i >= code.length) {
             break;
           }
 
+          const statementLine = line;
           const start = i;
 
-          while (
-            i < code.length &&
-            code[i] !== ";" &&
-            code[i] !== "{" &&
-            code[i] !== "}"
-          ) {
+          let quote = null;
+          let escaped = false;
+
+          while (i < code.length) {
+
+            const char = code[i];
+
+            if (char === "\n") {
+              line++;
+            }
+
+            if (escaped) {
+
+              escaped = false;
+              i++;
+
+              continue;
+
+            }
+
+            if (char === "\\") {
+
+              escaped = true;
+              i++;
+
+              continue;
+
+            }
+
+            if (quote) {
+
+              if (char === quote) {
+                quote = null;
+              }
+
+              i++;
+
+              continue;
+
+            }
+
+            if (
+              char === '"' ||
+              char === "'"
+            ) {
+
+              quote = char;
+              i++;
+
+              continue;
+
+            }
+
+            if (
+              char === ";" ||
+              char === "{" ||
+              char === "}"
+            ) {
+
+              break;
+
+            }
+
             i++;
+
           }
 
-          const header = code.slice(start, i).trim();
+          if (quote) {
+
+            this.error(
+              "E044",
+              "String quotation bondho hoyni.",
+              statementLine,
+              "String-er closing quote '\"' ba \"'\" dao."
+            );
+
+          }
+
+          const header =
+            code
+              .slice(start, i)
+              .trim();
 
           if (!header) {
+
+            if (code[i] === "}") {
+
+              this.error(
+                "E004",
+                "Unexpected closing brace '}'.",
+                statementLine,
+                "Check koro prottekta block-er jonno matching '{' ache kina."
+              );
+
+            }
+
             i++;
             continue;
+
           }
 
           const isBlock =
             header.startsWith("jodi ") ||
+            header === "nahole" ||
             header.startsWith("jotokhon ") ||
-            header.startsWith("nahole") ||
             header.startsWith("kaaj ");
 
           if (isBlock) {
-            while (i < code.length && /\s/.test(code[i])) {
+
+            while (
+              i < code.length &&
+              /\s/.test(code[i])
+            ) {
+
+              if (code[i] === "\n") {
+                line++;
+              }
+
               i++;
+
             }
 
             if (code[i] !== "{") {
-              throw new Error(
-                "bhul: block er '{' pawa jay nai."
+
+              this.error(
+                "E005",
+                `Block '${header}' er pore '{' pawa jayni.`,
+                statementLine,
+                "Block header-er pore opening brace '{' dao."
               );
+
             }
 
             i++;
 
             const bodyStart = i;
+
             let depth = 1;
-            let quote = null;
+            let blockQuote = null;
+            let blockEscaped = false;
 
-            while (i < code.length && depth > 0) {
-              const character = code[i];
+            while (
+              i < code.length &&
+              depth > 0
+            ) {
 
-              if (quote) {
-                if (
-                  character === quote &&
-                  code[i - 1] !== "\\"
-                ) {
-                  quote = null;
+              const char = code[i];
+
+              if (blockEscaped) {
+
+                blockEscaped = false;
+                i++;
+
+                continue;
+
+              }
+
+              if (char === "\\") {
+
+                blockEscaped = true;
+                i++;
+
+                continue;
+
+              }
+
+              if (blockQuote) {
+
+                if (char === blockQuote) {
+                  blockQuote = null;
                 }
-              } else {
-                if (
-                  character === '"' ||
-                  character === "'"
-                ) {
-                  quote = character;
-                } else if (character === "{") {
-                  depth++;
-                } else if (character === "}") {
-                  depth--;
+
+                if (char === "\n") {
+                  line++;
                 }
+
+                i++;
+
+                continue;
+
+              }
+
+              if (
+                char === '"' ||
+                char === "'"
+              ) {
+
+                blockQuote = char;
+                i++;
+
+                continue;
+
+              }
+
+              if (char === "{") {
+                depth++;
+              }
+
+              if (char === "}") {
+                depth--;
+              }
+
+              if (char === "\n") {
+                line++;
               }
 
               i++;
+
+            }
+
+            if (blockQuote) {
+
+              this.error(
+                "E044",
+                "String quotation bondho hoyni.",
+                statementLine,
+                "String-er closing quotation dao."
+              );
+
             }
 
             if (depth !== 0) {
-              throw new Error(
-                "bhul: block er '}' pawa jay nai."
+
+              this.error(
+                "E006",
+                `Block '${header}' er closing '}' pawa jayni.`,
+                statementLine,
+                "Block-er sheshe matching '}' dao."
               );
+
             }
 
-            const body = code.slice(bodyStart, i - 1);
+            const body =
+              code.slice(
+                bodyStart,
+                i - 1
+              );
 
-            if (header.startsWith("kaaj ")) {
-              const match = header
-                .slice(5)
-                .trim()
-                .match(
+            if (
+              header.startsWith("kaaj ")
+            ) {
+
+              const functionText =
+                header
+                  .slice(5)
+                  .trim();
+
+              const match =
+                functionText.match(
                   /^([A-Za-z_][A-Za-z0-9_]*)\s*\((.*?)\)$/
                 );
 
               if (!match) {
-                throw new Error(
-                  "bhul: function er syntax thik nai."
+
+                this.error(
+                  "E007",
+                  "Function declaration-er syntax vul.",
+                  statementLine,
+                  "Correct format: kaaj functionName(x, y) { ... }"
                 );
+
               }
 
               const name = match[1];
 
-              const params = match[2].trim()
-                ? match[2]
-                    .split(",")
-                    .map(parameter => parameter.trim())
-                : [];
+              if (this.isReserved(name)) {
 
-              this.functions.set(name, {
-                params,
-                body: this.parseCode(body)
-              });
+                this.error(
+                  "E034",
+                  "Reserved command function name hisebe use kora jabe na.",
+                  statementLine,
+                  "Onno ekta function name use koro."
+                );
+
+              }
+
+              const rawParams =
+                match[2].trim();
+
+              const params =
+                rawParams
+                  ? this.splitOutsideQuotes(
+                      rawParams,
+                      ","
+                    ).map(
+                      param => param.trim()
+                    )
+                  : [];
+
+              if (params.length > 20) {
+
+                this.error(
+                  "E033",
+                  "Function-e 20-er beshi parameter deya jabe na.",
+                  statementLine,
+                  "Parameter-er shongkha 20 ba tar kom rakho."
+                );
+
+              }
+
+              const seen =
+                new Set();
+
+              for (const param of params) {
+
+                if (!param) {
+
+                  this.error(
+                    "E008",
+                    "Function parameter-er naam thik nai.",
+                    statementLine,
+                    "Prottek parameter-er valid naam dao."
+                  );
+
+                }
+
+                this.validateVariableName(
+                  param,
+                  statementLine
+                );
+
+                if (seen.has(param)) {
+
+                  this.error(
+                    "E009",
+                    "Function-e duplicate parameter ache.",
+                    statementLine,
+                    "Prottek parameter-er alada naam dao."
+                  );
+
+                }
+
+                seen.add(param);
+
+              }
+
+              this.functions.set(
+                name,
+                {
+                  name,
+                  params,
+                  body:
+                    this.parseCode(
+                      body,
+                      statementLine
+                    ),
+                  line: statementLine
+                }
+              );
+
             } else {
+
               statements.push({
                 type: "block",
                 header,
-                code: body
+                code: body,
+                line: statementLine
               });
+
             }
 
             continue;
+
           }
 
           if (code[i] === ";") {
@@ -1186,208 +3557,841 @@ jotokhon x < 3 {
 
           statements.push({
             type: "simple",
-            code: header
+            code: header,
+            line: statementLine
           });
+
         }
 
         return statements;
+
       }
 
-      executeStatements(statements, scope) {
-        for (let i = 0; i < statements.length; i++) {
-          const statement = statements[i];
+      splitOutsideQuotes(
+        text,
+        delimiter
+      ) {
 
-          if (statement.type === "simple") {
-            this.executeLine(statement.code, scope);
+        const result = [];
+
+        let current = "";
+        let quote = null;
+        let escaped = false;
+        let depth = 0;
+
+        for (
+          let i = 0;
+          i < text.length;
+          i++
+        ) {
+
+          const char = text[i];
+
+          if (escaped) {
+
+            current += char;
+            escaped = false;
+
             continue;
+
           }
 
-          if (statement.header.startsWith("jodi ")) {
-            const condition = statement.header.slice(5);
+          if (char === "\\") {
 
-            if (this.evaluateCondition(condition, scope)) {
-              this.executeBlock(statement.code, scope);
-            } else {
-              const next = statements[i + 1];
+            current += char;
+            escaped = true;
 
-              if (
-                next &&
-                next.header.startsWith("nahole")
-              ) {
-                this.executeBlock(next.code, scope);
-                i++;
-              }
+            continue;
+
+          }
+
+          if (
+            char === '"' ||
+            char === "'"
+          ) {
+
+            if (!quote) {
+              quote = char;
+            } else if (quote === char) {
+              quote = null;
+            }
+
+            current += char;
+
+            continue;
+
+          }
+
+          if (!quote) {
+
+            if (char === "(") {
+              depth++;
+            }
+
+            if (char === ")") {
+              depth--;
+            }
+
+            if (
+              depth === 0 &&
+              char === delimiter
+            ) {
+
+              result.push(current);
+              current = "";
+
+              continue;
+
+            }
+
+          }
+
+          current += char;
+
+        }
+
+        result.push(current);
+
+        return result;
+
+      }
+
+      findOperatorOutsideQuotes(
+        text,
+        operator
+      ) {
+
+        let quote = null;
+        let escaped = false;
+        let depth = 0;
+
+        for (
+          let i = 0;
+          i < text.length;
+          i++
+        ) {
+
+          const char = text[i];
+
+          if (escaped) {
+
+            escaped = false;
+            continue;
+
+          }
+
+          if (char === "\\") {
+
+            escaped = true;
+            continue;
+
+          }
+
+          if (
+            char === '"' ||
+            char === "'"
+          ) {
+
+            if (!quote) {
+              quote = char;
+            } else if (quote === char) {
+              quote = null;
             }
 
             continue;
+
           }
 
-          if (statement.header.startsWith("nahole")) {
+          if (quote) {
             continue;
           }
 
-          if (statement.header.startsWith("jotokhon ")) {
-            this.executeWhile(
-              statement.header.slice(9),
-              statement.code,
-              scope
-            );
+          if (char === "(") {
+            depth++;
           }
+
+          if (char === ")") {
+            depth--;
+          }
+
+          if (
+            depth === 0 &&
+            text.slice(
+              i,
+              i + operator.length
+            ) === operator
+          ) {
+
+            return i;
+
+          }
+
         }
+
+        return -1;
+
       }
 
-      executeBlock(code, scope) {
-        const statements = this.parseCode(code);
-        this.executeStatements(statements.reverse(), scope);
+      executeStatements(
+        statements,
+        scope
+      ) {
+
+        for (
+          let i = 0;
+          i < statements.length;
+          i++
+        ) {
+
+          const statement =
+            statements[i];
+
+          if (
+            statement.type === "simple"
+          ) {
+
+            this.executeLine(
+              statement.code,
+              scope,
+              statement.line
+            );
+
+            continue;
+
+          }
+
+          if (
+            statement.header.startsWith("jodi ")
+          ) {
+
+            const condition =
+              statement.header
+                .slice(5)
+                .trim();
+
+            if (
+              this.evaluateCondition(
+                condition,
+                scope,
+                statement.line
+              )
+            ) {
+
+              this.executeReversedBlock(
+                statement.code,
+                scope,
+                statement.line
+              );
+
+            } else {
+
+              const next =
+                statements[i + 1];
+
+              if (
+                next &&
+                next.type === "block" &&
+                next.header === "nahole"
+              ) {
+
+                this.executeReversedBlock(
+                  next.code,
+                  scope,
+                  next.line
+                );
+
+                i++;
+
+              }
+
+            }
+
+            continue;
+
+          }
+
+          if (
+            statement.header === "nahole"
+          ) {
+
+            continue;
+
+          }
+
+          if (
+            statement.header.startsWith(
+              "jotokhon "
+            )
+          ) {
+
+            this.executeLoop(
+              statement.header
+                .slice(9)
+                .trim(),
+              statement.code,
+              scope,
+              statement.line
+            );
+
+            continue;
+
+          }
+
+          this.error(
+            "E010",
+            `Ei block bujha gelo na: '${statement.header}'.`,
+            statement.line,
+            "Supported block holo jodi, nahole, jotokhon, ebong kaaj."
+          );
+
+        }
+
       }
 
-      executeWhile(condition, code, scope) {
+      executeReversedBlock(
+        code,
+        scope,
+        line
+      ) {
+
+        const statements =
+          this.parseCode(
+            code,
+            line
+          );
+
+        statements.reverse();
+
+        this.executeStatements(
+          statements,
+          scope
+        );
+
+      }
+
+      scopeIsUnchanged(
+        previous,
+        current
+      ) {
+
+        if (
+          previous.size !==
+          current.size
+        ) {
+
+          return false;
+
+        }
+
+        for (
+          const [
+            key,
+            oldValue
+          ] of previous.entries()
+        ) {
+
+          if (!current.has(key)) {
+            return false;
+          }
+
+          if (
+            current.get(key) !==
+            oldValue
+          ) {
+
+            return false;
+
+          }
+
+        }
+
+        return true;
+
+      }
+
+      executeLoop(
+        condition,
+        code,
+        scope,
+        line
+      ) {
+
+        if (!condition.trim()) {
+
+          this.error(
+            "E035",
+            "jotokhon-er condition khali.",
+            line,
+            "Example: jotokhon x < 10 { ... }"
+          );
+
+        }
+
         let safety = 0;
 
         while (
-          this.evaluateCondition(condition, scope) &&
-          safety < 1000
+          this.evaluateCondition(
+            condition,
+            scope,
+            line
+          )
         ) {
-          this.executeBlock(code, scope);
-          safety++;
-        }
 
-        if (safety >= 1000) {
-          throw new Error(
-            "bhul: loop sesh hocche na, infinite loop!"
-          );
-        }
-      }
+          if (
+            safety >=
+            this.maxLoopIterations
+          ) {
 
-      executeLine(line, scope) {
-        line = line.trim();
-
-        const functionCall = line.match(
-          /^([A-Za-z_][A-Za-z0-9_]*)\s*\((.*?)\)$/
-        );
-
-        if (functionCall) {
-          const name = functionCall[1];
-
-          if (!this.functions.has(name)) {
-            throw new Error(
-              `bhul: ei function pawa jay nai (${name}).`
+            this.error(
+              "E011",
+              "Loop 1000 iteration-er beshi cholte parbe na.",
+              line,
+              "Condition check koro, jate loop eventually false hoy."
             );
+
           }
 
-          const functionData = this.functions.get(name);
+          const previous =
+            new Map(scope);
 
-          const argumentsList = functionCall[2].trim()
-            ? functionCall[2]
-                .split(",")
-                .map(value =>
-                  this.evaluateExpression(value, scope)
+          this.executeReversedBlock(
+            code,
+            scope,
+            line
+          );
+
+          safety++;
+
+          if (
+            this.scopeIsUnchanged(
+              previous,
+              scope
+            )
+          ) {
+
+            this.error(
+              "E036",
+              "Loop-er variable/state change hocche na.",
+              line,
+              "Loop-er vitore condition-ke affect kore emon value update koro."
+            );
+
+          }
+
+        }
+
+      }
+
+      executeLine(
+        line,
+        scope,
+        lineNumber
+      ) {
+
+        line =
+          line.trim();
+
+        if (!line) {
+          return;
+        }
+
+        const functionCall =
+          line.match(
+            /^([A-Za-z_][A-Za-z0-9_]*)\s*\((.*)\)$/
+          );
+
+        if (functionCall) {
+
+          const name =
+            functionCall[1];
+
+          if (
+            !this.functions.has(name)
+          ) {
+
+            this.error(
+              "E018",
+              `Ei name-er kono function nei: '${name}'.`,
+              lineNumber,
+              `Age function banao: kaaj ${name}() { ... }`
+            );
+
+          }
+
+          if (
+            this.callDepth >=
+            this.maxCallDepth
+          ) {
+
+            this.error(
+              "E020",
+              "Function call depth-er limit cross koreche.",
+              lineNumber,
+              "Recursion komao. Maximum depth 100."
+            );
+
+          }
+
+          const functionData =
+            this.functions.get(name);
+
+          const rawArguments =
+            functionCall[2].trim()
+              ? this.splitOutsideQuotes(
+                  functionCall[2],
+                  ","
                 )
-            : [];
+              : [];
+
+          for (
+            const argument of rawArguments
+          ) {
+
+            if (!argument.trim()) {
+
+              this.error(
+                "E032",
+                "Function argument khali.",
+                lineNumber,
+                "Commas-er majhe valid argument dao."
+              );
+
+            }
+
+          }
+
+          const argumentsList =
+            rawArguments.map(
+              argument =>
+                this.evaluateExpression(
+                  argument,
+                  scope,
+                  lineNumber
+                )
+            );
 
           if (
             argumentsList.length !==
             functionData.params.length
           ) {
-            throw new Error(
-              "bhul: function er argument sankha milche na."
+
+            this.error(
+              "E019",
+              "Function-er argument shongkha milche na.",
+              lineNumber,
+              `Ei function-e ${functionData.params.length} ta argument dorkar.`
             );
+
           }
 
-          const localScope = new Map(scope);
+          const localScope =
+            new Map(scope);
 
-          functionData.params.forEach((parameter, index) => {
-            localScope.set(parameter, argumentsList[index]);
-          });
+          functionData.params.forEach(
+            (parameter, index) => {
 
-          this.executeStatements(
-            [...functionData.body].reverse(),
-            localScope
+              localScope.set(
+                parameter,
+                argumentsList[index]
+              );
+
+            }
+          );
+
+          this.callDepth++;
+
+          try {
+
+            this.executeStatements(
+              [...functionData.body].reverse(),
+              localScope
+            );
+
+          } finally {
+
+            this.callDepth--;
+
+          }
+
+          return;
+
+        }
+
+        if (
+          line.startsWith("dekhao ")
+        ) {
+
+          const expression =
+            line.slice(7).trim();
+
+          if (!expression) {
+
+            this.error(
+              "E012",
+              "dekhao-er value deya hoyni ba syntax thik nai.",
+              lineNumber,
+              "Example: dekhao x;"
+            );
+
+          }
+
+          const value =
+            this.evaluateExpression(
+              expression,
+              scope,
+              lineNumber
+            );
+
+          this.output.push(
+            this.stringify(value)
           );
 
           return;
+
         }
 
-        if (line.startsWith("dekhao ")) {
-          const value = this.evaluateExpression(
-            line.slice(7),
-            scope
-          );
+        if (
+          line.startsWith("banao ")
+        ) {
 
-          this.print(value);
-          return;
-        }
+          const declaration =
+            line.slice(6).trim();
 
-        if (line.startsWith("banao ")) {
-          const parts = line.slice(6).split("=");
-
-          if (parts.length < 2) {
-            throw new Error(
-              "bhul: variable declaration er syntax thik nai."
+          const equalsIndex =
+            this.findOperatorOutsideQuotes(
+              declaration,
+              "="
             );
+
+          if (equalsIndex === -1) {
+
+            this.error(
+              "E013",
+              "banao-te '=' pawa jayni.",
+              lineNumber,
+              "Example: banao x = 10;"
+            );
+
           }
 
-          const name = parts[0].trim();
-          const expression = parts.slice(1).join("=");
+          const name =
+            declaration
+              .slice(0, equalsIndex)
+              .trim();
+
+          const expression =
+            declaration
+              .slice(equalsIndex + 1)
+              .trim();
+
+          this.validateVariableName(
+            name,
+            lineNumber
+          );
+
+          if (!expression) {
+
+            this.error(
+              "E014",
+              "Variable-er value khali rakha jabe na.",
+              lineNumber,
+              "'=' er pore valid expression dao."
+            );
+
+          }
 
           if (
-            !/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)
+            scope.has(name)
           ) {
-            throw new Error(
-              `bhul: variable er naam thik nai (${name}).`
+
+            this.error(
+              "E043",
+              "Ei variable already declare kora hoyeche.",
+              lineNumber,
+              "Same scope-e ekoi variable abar banao koro na."
             );
+
           }
 
           scope.set(
             name,
-            this.evaluateExpression(expression, scope)
+            this.evaluateExpression(
+              expression,
+              scope,
+              lineNumber
+            )
           );
 
           return;
+
         }
 
-        if (line.includes("=")) {
-          const parts = line.split("=");
+        const assignmentIndex =
+          this.findOperatorOutsideQuotes(
+            line,
+            "="
+          );
 
-          const name = parts[0].trim();
-          const expression = parts.slice(1).join("=");
+        if (
+          assignmentIndex !== -1 &&
+          !line.includes("==") &&
+          !line.includes("!=") &&
+          !line.includes(">=") &&
+          !line.includes("<=")
+        ) {
+
+          const name =
+            line
+              .slice(0, assignmentIndex)
+              .trim();
+
+          const expression =
+            line
+              .slice(assignmentIndex + 1)
+              .trim();
 
           if (!scope.has(name)) {
-            throw new Error(
-              `bhul: ei variable ba value pawa jay nai (${name}).`
+
+            this.error(
+              "E015",
+              `Ei variable ba value pawa jay nai: '${name}'.`,
+              lineNumber,
+              "Age banao diye variable declare koro."
             );
+
+          }
+
+          if (!expression) {
+
+            this.error(
+              "E016",
+              "Assignment-er value khali.",
+              lineNumber,
+              "Assignment-er pore ekta valid expression dao."
+            );
+
           }
 
           scope.set(
             name,
-            this.evaluateExpression(expression, scope)
+            this.evaluateExpression(
+              expression,
+              scope,
+              lineNumber
+            )
           );
 
           return;
+
         }
 
-        throw new Error(
-          `bhul: ei line bujha gelo na (${line}).`
+        this.error(
+          "E017",
+          `Ei line bujha gelo na: '${line}'.`,
+          lineNumber,
+          "Line-er syntax check koro."
         );
+
       }
 
-      evaluateCondition(expression, scope) {
-        expression = expression.trim();
+      evaluateCondition(
+        expression,
+        scope,
+        line
+      ) {
 
-        if (expression.includes("&&")) {
-          return expression
-            .split("&&")
-            .every(value =>
-              this.evaluateCondition(value, scope)
-            );
+        const expr =
+          expression.trim();
+
+        if (!expr) {
+
+          this.error(
+            "E021",
+            "Condition khali rakha jabe na.",
+            line,
+            "Example: jodi x > 5 { ... }"
+          );
+
         }
 
-        if (expression.includes("||")) {
-          return expression
-            .split("||")
-            .some(value =>
-              this.evaluateCondition(value, scope)
-            );
+        if (
+          expr.startsWith("&&") ||
+          expr.endsWith("&&") ||
+          expr.includes("&& &&")
+        ) {
+
+          this.error(
+            "E037",
+            "&& operator-er use thik nai.",
+            line,
+            "Duita valid condition-er majhe && use koro."
+          );
+
+        }
+
+        if (
+          expr.startsWith("||") ||
+          expr.endsWith("||") ||
+          expr.includes("|| ||")
+        ) {
+
+          this.error(
+            "E038",
+            "|| operator-er use thik nai.",
+            line,
+            "Duita valid condition-er majhe || use koro."
+          );
+
+        }
+
+        const orParts =
+          this.splitLogical(
+            expr,
+            "||"
+          );
+
+        if (orParts.length > 1) {
+
+          return orParts.some(
+            part =>
+              this.evaluateCondition(
+                part,
+                scope,
+                line
+              )
+          );
+
+        }
+
+        const andParts =
+          this.splitLogical(
+            expr,
+            "&&"
+          );
+
+        if (andParts.length > 1) {
+
+          return andParts.every(
+            part =>
+              this.evaluateCondition(
+                part,
+                scope,
+                line
+              )
+          );
+
+        }
+
+        if (
+          expr.startsWith("!")
+        ) {
+
+          return !this.evaluateCondition(
+            expr.slice(1),
+            scope,
+            line
+          );
+
         }
 
         const operators = [
@@ -1399,154 +4403,605 @@ jotokhon x < 3 {
           "<"
         ];
 
-        for (const operator of operators) {
-          if (expression.includes(operator)) {
-            const parts = expression.split(operator);
+        for (
+          const operator of operators
+        ) {
 
-            const left = this.evaluateExpression(
-              parts[0],
-              scope
+          const index =
+            this.findOperatorOutsideQuotes(
+              expr,
+              operator
             );
 
-            const right = this.evaluateExpression(
-              parts.slice(1).join(operator),
-              scope
-            );
-
-            if (operator === "==") {
-              return left === right;
-            }
-
-            if (operator === "!=") {
-              return left !== right;
-            }
-
-            if (operator === ">") {
-              return Number(left) > Number(right);
-            }
-
-            if (operator === "<") {
-              return Number(left) < Number(right);
-            }
-
-            if (operator === ">=") {
-              return Number(left) >= Number(right);
-            }
-
-            if (operator === "<=") {
-              return Number(left) <= Number(right);
-            }
+          if (index === -1) {
+            continue;
           }
+
+          const leftText =
+            expr.slice(
+              0,
+              index
+            ).trim();
+
+          const rightText =
+            expr.slice(
+              index + operator.length
+            ).trim();
+
+          if (
+            !leftText ||
+            !rightText
+          ) {
+
+            this.error(
+              "E022",
+              "Condition incomplete.",
+              line,
+              "Comparison-er dui pashei valid value dao."
+            );
+
+          }
+
+          const left =
+            this.evaluateExpression(
+              leftText,
+              scope,
+              line
+            );
+
+          const right =
+            this.evaluateExpression(
+              rightText,
+              scope,
+              line
+            );
+
+          if (
+            operator === "==" ||
+            operator === "!="
+          ) {
+
+            return operator === "=="
+              ? left === right
+              : left !== right;
+
+          }
+
+          if (
+            typeof left !== "number" ||
+            typeof right !== "number"
+          ) {
+
+            this.error(
+              "E029",
+              "Ei comparison-er jonno numeric value dorkar.",
+              line,
+              ">, <, >=, <= er jonno number use koro."
+            );
+
+          }
+
+          if (operator === ">") {
+            return left > right;
+          }
+
+          if (operator === "<") {
+            return left < right;
+          }
+
+          if (operator === ">=") {
+            return left >= right;
+          }
+
+          if (operator === "<=") {
+            return left <= right;
+          }
+
         }
 
-        throw new Error(
-          `bhul: condition thik moto lekha hoyni (${expression}).`
-        );
+        const value =
+          this.evaluateExpression(
+            expr,
+            scope,
+            line
+          );
+
+        if (
+          typeof value !== "boolean"
+        ) {
+
+          this.error(
+            "E023",
+            "Condition theke boolean value pawa jayni.",
+            line,
+            "Condition-er result sotti ba bhul hote hobe."
+          );
+
+        }
+
+        return value;
+
       }
 
-      evaluateExpression(expression, scope) {
-        expression = expression.trim();
+      splitLogical(
+        text,
+        operator
+      ) {
+
+        const parts = [];
+
+        let current = "";
+        let quote = null;
+        let escaped = false;
+        let depth = 0;
+
+        for (
+          let i = 0;
+          i < text.length;
+          i++
+        ) {
+
+          const char = text[i];
+
+          if (escaped) {
+
+            current += char;
+            escaped = false;
+
+            continue;
+
+          }
+
+          if (char === "\\") {
+
+            current += char;
+            escaped = true;
+
+            continue;
+
+          }
+
+          if (
+            char === '"' ||
+            char === "'"
+          ) {
+
+            if (!quote) {
+              quote = char;
+            } else if (quote === char) {
+              quote = null;
+            }
+
+            current += char;
+            continue;
+
+          }
+
+          if (!quote) {
+
+            if (char === "(") {
+              depth++;
+            }
+
+            if (char === ")") {
+              depth--;
+            }
+
+            if (
+              depth === 0 &&
+              text.slice(
+                i,
+                i + operator.length
+              ) === operator
+            ) {
+
+              parts.push(current);
+              current = "";
+              i += operator.length - 1;
+
+              continue;
+
+            }
+
+          }
+
+          current += char;
+
+        }
+
+        parts.push(current);
+
+        return parts;
+
+      }
+
+      evaluateExpression(
+        expression,
+        scope,
+        line
+      ) {
+
+        let expr =
+          expression.trim();
+
+        if (!expr) {
+
+          this.error(
+            "E024",
+            "Expression khali.",
+            line,
+            "Expression-er moddhe ekta valid value dao."
+          );
+
+        }
 
         if (
           (
-            expression.startsWith('"') &&
-            expression.endsWith('"')
+            expr.startsWith('"') &&
+            expr.endsWith('"')
           ) ||
           (
-            expression.startsWith("'") &&
-            expression.endsWith("'")
+            expr.startsWith("'") &&
+            expr.endsWith("'")
           )
         ) {
-          return expression.slice(1, -1);
+
+          return this.unescapeString(
+            expr.slice(1, -1)
+          );
+
         }
 
         if (
-          expression !== "" &&
-          !isNaN(Number(expression))
+          (
+            expr.startsWith('"') &&
+            !expr.endsWith('"')
+          ) ||
+          (
+            expr.startsWith("'") &&
+            !expr.endsWith("'")
+          )
         ) {
-          return Number(expression);
+
+          this.error(
+            "E044",
+            "String quotation bondho hoyni.",
+            line,
+            "String-er closing quotation dao."
+          );
+
         }
 
-        if (scope.has(expression)) {
-          return scope.get(expression);
+        if (expr === "sotti") {
+          return true;
         }
 
-        const operators = ["+", "-", "*", "/", "%"];
+        if (expr === "bhul") {
+          return false;
+        }
 
-        for (const operator of operators) {
-          const parts = expression.split(operator);
+        if (expr === "true") {
+          return true;
+        }
 
-          if (parts.length > 1) {
-            const values = parts.map(value =>
-              this.evaluateExpression(value, scope)
+        if (expr === "false") {
+          return false;
+        }
+
+        if (expr === "null") {
+          return null;
+        }
+
+        if (
+          /^-?\d+(?:\.\d+)?$/.test(expr)
+        ) {
+
+          return Number(expr);
+
+        }
+
+        if (
+          scope.has(expr)
+        ) {
+
+          return scope.get(expr);
+
+        }
+
+        if (
+          /^[A-Za-z_][A-Za-z0-9_]*\s*\(/
+            .test(expr)
+        ) {
+
+          this.error(
+            "E027",
+            "Function call expression-er vitore use kora jabe na.",
+            line,
+            "Function call alada statement hisebe use koro."
+          );
+
+        }
+
+        const operators = [
+          "+",
+          "-",
+          "*",
+          "/",
+          "%"
+        ];
+
+        for (
+          const operator of operators
+        ) {
+
+          const index =
+            this.findArithmeticOperator(
+              expr,
+              operator
             );
 
-            if (operator === "+") {
-              if (
-                values.some(value =>
-                  typeof value === "string"
-                )
-              ) {
-                return values.join("");
-              }
-
-              return values.reduce(
-                (total, value) => total + value,
-                0
-              );
-            }
-
-            if (operator === "-") {
-              return values
-                .slice(1)
-                .reduce(
-                  (total, value) => total - value,
-                  values[0]
-                );
-            }
-
-            if (operator === "*") {
-              return values.reduce(
-                (total, value) => total * value,
-                1
-              );
-            }
-
-            if (operator === "/") {
-              return values
-                .slice(1)
-                .reduce(
-                  (total, value) => total / value,
-                  values[0]
-                );
-            }
-
-            if (operator === "%") {
-              return values
-                .slice(1)
-                .reduce(
-                  (total, value) => total % value,
-                  values[0]
-                );
-            }
+          if (index === -1) {
+            continue;
           }
+
+          const leftText =
+            expr
+              .slice(0, index)
+              .trim();
+
+          const rightText =
+            expr
+              .slice(index + 1)
+              .trim();
+
+          if (
+            !leftText ||
+            !rightText
+          ) {
+
+            this.error(
+              "E041",
+              "Arithmetic expression incomplete.",
+              line,
+              "Operator-er dui pashe valid value dao."
+            );
+
+          }
+
+          const left =
+            this.evaluateExpression(
+              leftText,
+              scope,
+              line
+            );
+
+          const right =
+            this.evaluateExpression(
+              rightText,
+              scope,
+              line
+            );
+
+          if (operator === "+") {
+
+            if (
+              typeof left === "string" ||
+              typeof right === "string"
+            ) {
+
+              return (
+                this.stringify(left) +
+                this.stringify(right)
+              );
+
+            }
+
+            if (
+              typeof left !== "number" ||
+              typeof right !== "number"
+            ) {
+
+              this.error(
+                "E025",
+                "Operator '+' sudhu number ba string-er sathe use kora jabe.",
+                line,
+                "Arithmetic-er jonno numeric value ba string concatenation use koro."
+              );
+
+            }
+
+            return left + right;
+
+          }
+
+          if (
+            typeof left !== "number" ||
+            typeof right !== "number"
+          ) {
+
+            this.error(
+              "E025",
+              `Operator '${operator}' sudhu number-er sathe use kora jabe.`,
+              line,
+              "Arithmetic-er jonno numeric value use koro."
+            );
+
+          }
+
+          if (
+            operator === "/" &&
+            right === 0
+          ) {
+
+            this.error(
+              "E026",
+              "Zero diye division kora jabe na.",
+              line,
+              "Divisor zero kina check koro."
+            );
+
+          }
+
+          if (
+            operator === "%" &&
+            right === 0
+          ) {
+
+            this.error(
+              "E042",
+              "Zero diye modulo kora jabe na.",
+              line,
+              "Modulo-r right side zero rakho na."
+            );
+
+          }
+
+          if (operator === "-") {
+            return left - right;
+          }
+
+          if (operator === "*") {
+            return left * right;
+          }
+
+          if (operator === "/") {
+            return left / right;
+          }
+
+          if (operator === "%") {
+            return left % right;
+          }
+
         }
 
-        throw new Error(
-          `bhul: ei variable ba value pawa jay nai (${expression}).`
+        this.error(
+          "E028",
+          `Ei variable ba value pawa jay nai: '${expr}'.`,
+          line,
+          "Variable declare kora hoyeche kina ebong spelling thik ache kina check koro."
         );
+
       }
+
+      findArithmeticOperator(
+        text,
+        operator
+      ) {
+
+        let quote = null;
+        let escaped = false;
+        let depth = 0;
+
+        for (
+          let i = text.length - 1;
+          i >= 0;
+          i--
+        ) {
+
+          const char = text[i];
+
+          if (char === '"') {
+            quote = quote ? null : '"';
+            continue;
+          }
+
+          if (char === "'") {
+            quote = quote ? null : "'";
+            continue;
+          }
+
+          if (quote) {
+            continue;
+          }
+
+          if (char === ")") {
+            depth++;
+            continue;
+          }
+
+          if (char === "(") {
+            depth--;
+            continue;
+          }
+
+          if (
+            depth === 0 &&
+            char === operator
+          ) {
+
+            if (
+              (
+                operator === "-" ||
+                operator === "+"
+              ) &&
+              i === 0
+            ) {
+
+              continue;
+
+            }
+
+            return i;
+
+          }
+
+        }
+
+        return -1;
+
+      }
+
+      unescapeString(
+        value
+      ) {
+
+        return value
+          .replace(/\\n/g, "\n")
+          .replace(/\\t/g, "\t")
+          .replace(/\\"/g, '"')
+          .replace(/\\'/g, "'")
+          .replace(/\\\\/g, "\\");
+
+      }
+
+      stringify(
+        value
+      ) {
+
+        if (value === null) {
+          return "null";
+        }
+
+        if (value === true) {
+          return "sotti";
+        }
+
+        if (value === false) {
+          return "bhul";
+        }
+
+        return String(value);
+
+      }
+
     }
 
+    /* =========================================================
+       PLAYGROUND SAMPLES
+       ========================================================= */
+
     const samples = {
-      loop: `banao x = 0;
+
+      loop:
+`banao x = 0;
 
 jotokhon x < 3 {
     x = x + 1;
     dekhao x;
 }`,
 
-      math: `banao a = 8;
+      math:
+`banao a = 8;
 banao b = 3;
 
 dekhao a + b;
@@ -1555,7 +5010,8 @@ dekhao a * b;
 dekhao a / b;
 dekhao a % b;`,
 
-      ifelse: `banao x = 7;
+      ifelse:
+`banao x = 7;
 
 jodi x > 5 {
     dekhao "besh bhalo";
@@ -1564,138 +5020,314 @@ nahole {
     dekhao "abar chesta koro";
 }`,
 
-      function: `kaaj greet(name) {
+      logic:
+`banao age = 18;
+banao student = sotti;
+
+jodi age >= 16 && student == sotti {
+    dekhao "Eligible";
+}`,
+
+      function:
+`kaaj greet(name) {
     dekhao "Hello, " + name;
 }
 
 greet("Bangladesh");`,
 
-      text: `dekhao "Hello, Bangladesh!";
+      text:
+`dekhao "Hello, Bangladesh!";
 dekhao "Ulta is running.";`,
 
-      installation: `dekhao "Install Node.js";
+      types:
+`banao a = sotti;
+banao b = bhul;
+banao c = null;
+banao d = 42;
+
+dekhao a;
+dekhao b;
+dekhao c;
+dekhao d;`,
+
+      errors:
+`dekhao score;`,
+
+      installation:
+`dekhao "Install Node.js";
 dekhao "Install Git";
 dekhao "git clone https://github.com/notmubasshir/Ulta-lang.git";
 dekhao "cd Ulta-lang";
 dekhao "npm install";
 dekhao "npm run dev";`
+
     };
 
-    const code = document.getElementById("code");
-    const output = document.getElementById("output");
-    const runStatus = document.getElementById("runStatus");
-    const editorStatus = document.getElementById("editorStatus");
-    const samplesSelect = document.getElementById("samples");
+    /* =========================================================
+       DOM
+       ========================================================= */
+
+    const code =
+      document.getElementById("code");
+
+    const output =
+      document.getElementById("output");
+
+    const runStatus =
+      document.getElementById("runStatus");
+
+    const editorStatus =
+      document.getElementById("editorStatus");
+
+    const samplesSelect =
+      document.getElementById("samples");
+
+    const runButton =
+      document.getElementById("run");
+
+    const resetButton =
+      document.getElementById("reset");
+
+    const clearButton =
+      document.getElementById("clear");
+
+    const themeButton =
+      document.getElementById("themeButton");
+
+    /* =========================================================
+       RUN PROGRAM
+       ========================================================= */
 
     function runProgram() {
-      output.classList.remove("error");
+
+      output.classList.remove(
+        "error"
+      );
+
       output.textContent = "";
 
-      runStatus.textContent = "Running...";
-      editorStatus.textContent = "Executing";
+      runStatus.textContent =
+        "Running...";
 
-      const logs = [];
+      editorStatus.textContent =
+        "Executing";
 
       try {
-        const engine = new UltaInterpreter(value => {
-          logs.push(String(value));
-        });
 
-        engine.interpret(code.value);
+        const engine =
+          new UltaInterpreter();
 
-        output.textContent = logs.length
-          ? logs.join("\n")
-          : "[Process exited with code 0]";
-
-        runStatus.textContent = "Success";
-        editorStatus.textContent = "Ready";
-      } catch (error) {
-        output.classList.add("error");
+        const logs =
+          engine.interpret(
+            code.value
+          );
 
         output.textContent =
-          error && error.message
-            ? error.message
-            : String(error);
+          logs.length
+            ? logs.join("\n")
+            : "[Process exited with code 0]";
 
-        runStatus.textContent = "Error";
-        editorStatus.textContent = "Fix the error";
+        runStatus.textContent =
+          "Success";
+
+        editorStatus.textContent =
+          "Ready";
+
+      } catch (error) {
+
+        output.classList.add(
+          "error"
+        );
+
+        output.textContent =
+          error instanceof UltaError
+            ? error.toString()
+            : (
+                error &&
+                error.message
+                  ? error.message
+                  : String(error)
+              );
+
+        runStatus.textContent =
+          "Error";
+
+        editorStatus.textContent =
+          "Fix the error";
+
       }
+
     }
 
-    document
-      .getElementById("run")
-      .addEventListener("click", runProgram);
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
 
-    document
-      .getElementById("clear")
-      .addEventListener("click", () => {
-        output.classList.remove("error");
-        output.textContent = "Console cleared.";
-        runStatus.textContent = "Idle";
-      });
+    runButton.addEventListener(
+      "click",
+      runProgram
+    );
 
-    document
-      .getElementById("reset")
-      .addEventListener("click", () => {
-        code.value = samples.loop;
-        samplesSelect.value = "loop";
+    clearButton.addEventListener(
+      "click",
+      () => {
 
-        output.classList.remove("error");
+        output.classList.remove(
+          "error"
+        );
+
+        output.textContent =
+          "Console cleared.";
+
+        runStatus.textContent =
+          "Idle";
+
+      }
+    );
+
+    resetButton.addEventListener(
+      "click",
+      () => {
+
+        code.value =
+          samples.loop;
+
+        samplesSelect.value =
+          "loop";
+
+        output.classList.remove(
+          "error"
+        );
+
         output.textContent =
           "Click “Run script” to execute your Ulta code.";
 
-        runStatus.textContent = "Idle";
-        editorStatus.textContent = "Ready";
-      });
+        runStatus.textContent =
+          "Idle";
 
-    samplesSelect.addEventListener("change", event => {
-      code.value = samples[event.target.value];
+        editorStatus.textContent =
+          "Ready";
 
-      output.classList.remove("error");
-      output.textContent = "Sample loaded. Click “Run script”.";
+      }
+    );
 
-      runStatus.textContent = "Idle";
-      editorStatus.textContent = "Ready";
-    });
+    samplesSelect.addEventListener(
+      "change",
+      event => {
 
-    code.addEventListener("keydown", event => {
-      if (event.key === "Tab") {
-        event.preventDefault();
+        code.value =
+          samples[
+            event.target.value
+          ];
 
-        code.setRangeText(
-          "    ",
-          code.selectionStart,
-          code.selectionEnd,
-          "end"
+        output.classList.remove(
+          "error"
         );
+
+        output.textContent =
+          "Sample loaded. Click “Run script”.";
+
+        runStatus.textContent =
+          "Idle";
+
+        editorStatus.textContent =
+          "Ready";
+
       }
+    );
 
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key === "Enter"
-      ) {
-        event.preventDefault();
-        runProgram();
+    /* =========================================================
+       EDITOR KEYBOARD SHORTCUTS
+       ========================================================= */
+
+    code.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Tab"
+        ) {
+
+          event.preventDefault();
+
+          code.setRangeText(
+            "    ",
+            code.selectionStart,
+            code.selectionEnd,
+            "end"
+          );
+
+        }
+
+        if (
+          (
+            event.ctrlKey ||
+            event.metaKey
+          ) &&
+          event.key === "Enter"
+        ) {
+
+          event.preventDefault();
+
+          runProgram();
+
+        }
+
       }
-    });
+    );
 
-    const themeButton = document.getElementById("themeButton");
+    /* =========================================================
+       THEME
+       ========================================================= */
 
-    themeButton.addEventListener("click", () => {
-      const root = document.documentElement;
+    function updateThemeButton() {
 
-      const nextTheme =
-        root.dataset.theme === "dark"
-          ? "light"
-          : "dark";
-
-      root.dataset.theme = nextTheme;
+      const theme =
+        document.documentElement
+          .dataset.theme;
 
       themeButton.textContent =
-        nextTheme === "dark"
+        theme === "dark"
           ? "☀️"
           : "🌙";
-    });
+
+      themeButton.setAttribute(
+        "aria-label",
+        theme === "dark"
+          ? "Switch to light theme"
+          : "Switch to dark theme"
+      );
+
+    }
+
+    updateThemeButton();
+
+    themeButton.addEventListener(
+      "click",
+      () => {
+
+        const root =
+          document.documentElement;
+
+        const nextTheme =
+          root.dataset.theme === "dark"
+            ? "light"
+            : "dark";
+
+        root.dataset.theme =
+          nextTheme;
+
+        localStorage.setItem(
+          "ulta-theme",
+          nextTheme
+        );
+
+        updateThemeButton();
+
+      }
+    );
+
   </script>
+
 </body>
 </html>
